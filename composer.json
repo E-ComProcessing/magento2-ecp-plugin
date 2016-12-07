@@ -1,0 +1,69 @@
+{
+    "name": "e-comprocessing/magento2-ecp-plugin",
+    "description": "E-ComProcessing Payment Gateway for Magento 2",
+    "type": "magento2-module",
+    "version": "1.1.1",
+    "license": [
+        "OSL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "E-ComProcessing",
+            "email": "shopping_carts@e-comprocessing.com",
+            "homepage": "http://www.e-comprocessing.com"
+        }
+    ],
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "genesisgateway/genesis_php": "1.4.*"
+    },
+    "keywords": [
+        "e-comprocessing",
+        "magento2_module",
+        "magento2_payment_module",
+        "payment_gateway",
+        "magento2_payment_gateway",
+        "payment_processing",
+        "magento2_payment_processing",
+        "e-commerce",
+        "visa",
+        "mastercard",
+        "debit_card",
+        "credit_card",
+        "authorize",
+        "capture",
+        "recurring",
+        "refund",
+        "void",
+        "3d-secure",
+        "neteller",
+        "ezeewallet",
+        "paybyvouchers",
+        "sofort",
+        "paysafecard",
+        "ppro",
+        "ideal",
+        "cashu",
+        "elv",
+        "eps",
+        "giropay",
+        "przelewy24",
+        "qiwi",
+        "safetypay",
+        "teleingreso",
+        "trustpay",
+        "webmoney",
+        "poli",
+        "tc40",
+        "fraud",
+        "chargeback"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "EComProcessing\\Genesis\\": ""
+        }
+    }
+}
