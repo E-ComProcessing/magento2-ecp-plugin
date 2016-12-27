@@ -1,4 +1,4 @@
-E-ComProcessing Genesis client for Magento 2 CE
+E-ComProcessing Gateway Module for Magento 2 CE
 =============================
 
 This is a Payment Module for Magento 2 Community Edition, that gives you the ability to process payments through E-ComProcessing's Payment Gateway - Genesis.
@@ -6,11 +6,11 @@ This is a Payment Module for Magento 2 Community Edition, that gives you the abi
 Requirements
 ------------
 
-* Magento 2 Community Edition* 2.x (Tested upto 2.1)
+* Magento 2 Community Edition 2.x (Tested upto __2.1.3__)
 * [GenesisPHP v1.4.x](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
 * PCI-certified server in order to use ```E-ComProcessing Direct```
 
-*Note: this module has been tested only with Magento 2 __Community Edition__, it may not work
+*Note:* this module has been tested only with Magento 2 __Community Edition__, it may not work
 as intended with Magento 2 __Enterprise Edition__
 
 Installation (composer)
@@ -34,6 +34,11 @@ Installation (composer)
         ```sh
         $ php bin/magento setup:upgrade
         ```
+    * Deploy Magento Static Content (__Execute If needed__)
+    
+        ```sh
+        $ php bin/magento setup:static-content:deploy
+        ```    
 
 Installation (manual)
 ---------------------
@@ -55,6 +60,12 @@ Installation (manual)
     $ php bin/magento setup:upgrade
     ```
 
+* Deploy Magento Static Content (__Execute If needed__)
+    
+    ```sh
+    $ php bin/magento setup:static-content:deploy
+    ```   
+
 Configuration
 ---------------------
 
@@ -63,6 +74,18 @@ Configuration
   go to  ```System``` -> ```Cache Management``` and clear Magento Cache by clicking on ```Flush Magento Cache```
 * Go back to ```Payment Methods``` and click the button ```Configure``` under the payment method ```E-ComProcessing Checkout``` or ```E-ComProcessing Direct``` to expand the available settings
 * Set ```Enabled``` to ```Yes```, set the correct credentials, select your prefered transaction types and additional settings and click ```Save config```
+
+Configure Magento over secured HTTPS Connection
+---------------------
+This configuration is needed for ```E-ComProcessing Direct``` Method to be usable.
+
+Steps:
+* Ensure you have installed a valid SSL Certificate on your Web Server & you have configured your Virtual Host correctly.
+* Login to Magento 2 Admin Panel
+* Navigate to ```Stores``` -> ```Configuration``` -> ```General``` -> ```Web``` 
+* Expand Tab ```Base URLs (Secure)``` and set ```Use Secure URLs on Storefront``` and ```Use Secure URLs in Admin``` to **Yes**
+* Set your ```Secure Base URL``` and click ```Save Config```
+* It is recommended to add a **Rewrite Rule** from ```http``` to ```https``` or to configure a **Permanent Redirect** to ```https``` in your virtual host
 
 GenesisPHP Requirements
 ------------
