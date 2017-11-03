@@ -19,6 +19,9 @@
 
 namespace EComProcessing\Genesis\Helper;
 
+use \Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
+use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
+
 /**
  * Helper Class for all Payment Methods
  *
@@ -58,14 +61,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\Framework\Locale\ResolverInterface
      */
     protected $_localeResolver;
+    /**
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $_customerSession;
 
     /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Payment\Helper\Data $paymentData
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager,
-     * @param \EComProcessing\Genesis\Model\ConfigFactory $configFactory,
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \EComProcessing\Genesis\Model\ConfigFactory $configFactory
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
+     * @param \Magento\Customer\Model\Session $customerSession
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
@@ -73,13 +81,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \EComProcessing\Genesis\Model\ConfigFactory $configFactory,
-        \Magento\Framework\Locale\ResolverInterface $localeResolver
+        \Magento\Framework\Locale\ResolverInterface $localeResolver,
+        \Magento\Customer\Model\Session $customerSession
     ) {
         $this->_objectManager = $objectManager;
         $this->_paymentData   = $paymentData;
         $this->_storeManager  = $storeManager;
         $this->_configFactory = $configFactory;
         $this->_localeResolver = $localeResolver;
+        $this->_customerSession = $customerSession;
 
         $this->_scopeConfig   = $context->getScopeConfig();
 
@@ -148,6 +158,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected function getLocaleResolver()
     {
         return $this->_localeResolver;
+    }
+
+    /**
+     * Get an Instance of the Magento Customer Session
+     * @return \Magento\Customer\Model\Session
+     */
+    protected function getCustomerSession()
+    {
+        return $this->_customerSession;
     }
 
     /**
@@ -233,29 +252,36 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Generates a unique hash, used for the transaction id
+     * @param $length
      * @return string
      */
-    protected function uniqHash()
+    protected function uniqHash($length = 30)
     {
-        return md5(uniqid(microtime().mt_rand(), true));
+        return substr(sha1(
+            uniqid(
+                microtime() . mt_rand(),
+                true
+            )
+        ), 0, $length);
     }
 
     /**
      * Builds a transaction id
      * @param int|null $orderId
+     * @param int $length
      * @return string
      */
-    public function genTransactionId($orderId = null)
+    public function genTransactionId($orderId = null, $length = 30)
     {
         if (empty($orderId)) {
-            return $this->uniqHash();
+            return $this->uniqHash($length);
         }
 
-        return sprintf(
-            "%s_%s",
-            strval($orderId),
-            $this->uniqHash()
-        );
+        return substr(sprintf(
+            '%s_%s',
+            (string)$orderId,
+            $this->uniqHash($length)
+        ), 0, $length);
     }
 
     /**
@@ -823,15 +849,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function canRefundTransaction($transaction)
     {
         $refundableTransactions = [
-            \Genesis\API\Constants\Transaction\Types::CAPTURE,
-            \Genesis\API\Constants\Transaction\Types::SALE,
-            \Genesis\API\Constants\Transaction\Types::SALE_3D,
-            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE,
-            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE_3D,
-            \Genesis\API\Constants\Transaction\Types::RECURRING_SALE,
-            \Genesis\API\Constants\Transaction\Types::CASHU,
-            \Genesis\API\Constants\Transaction\Types::PPRO,
-            \Genesis\API\Constants\Transaction\Types::ABNIDEAL
+            GenesisTransactionTypes::CAPTURE,
+            GenesisTransactionTypes::SALE,
+            GenesisTransactionTypes::SALE_3D,
+            GenesisTransactionTypes::INIT_RECURRING_SALE,
+            GenesisTransactionTypes::INIT_RECURRING_SALE_3D,
+            GenesisTransactionTypes::RECURRING_SALE,
+            GenesisTransactionTypes::CASHU,
+            GenesisTransactionTypes::PPRO,
+            GenesisTransactionTypes::ABNIDEAL,
+            GenesisTransactionTypes::TRUSTLY_SALE,
+            GenesisTransactionTypes::P24,
+            GenesisTransactionTypes::INPAY,
+            GenesisTransactionTypes::PAYPAL_EXPRESS
         ];
 
         $transactionType = $this->getTransactionTypeByTransaction(
@@ -902,5 +932,79 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             (isset($response->message) && isset($response->technical_message))
                 ? "{$response->message} {$response->technical_message}"
                 : 'An error has occurred while processing your request to the gateway';
+    }
+
+    /**
+     * @param string $transactionType
+     * @return bool
+     */
+    public function getShouldCreateAuthNotification($transactionType)
+    {
+        $authorizeTransactions = [
+            GenesisTransactionTypes::AUTHORIZE,
+            GenesisTransactionTypes::AUTHORIZE_3D
+        ];
+
+        return in_array($transactionType, $authorizeTransactions);
+    }
+
+    /**
+     * @param string $transactionType
+     * @return bool
+     */
+    public function getShouldCreateCaptureNotification($transactionType)
+    {
+        $captureNotificationTransactions = [
+            GenesisTransactionTypes::ABNIDEAL,
+            GenesisTransactionTypes::ALIPAY,
+            GenesisTransactionTypes::CITADEL_PAYIN,
+            GenesisTransactionTypes::CASHU,
+            GenesisTransactionTypes::EZEEWALLET,
+            GenesisTransactionTypes::IDEBIT_PAYIN,
+            GenesisTransactionTypes::INPAY,
+            GenesisTransactionTypes::INSTA_DEBIT_PAYIN,
+            GenesisTransactionTypes::TRUSTLY_SALE,
+            GenesisTransactionTypes::NETELLER,
+            GenesisTransactionTypes::P24,
+            GenesisTransactionTypes::PAYBYVOUCHER_SALE,
+            GenesisTransactionTypes::PAYBYVOUCHER_YEEPAY,
+            GenesisTransactionTypes::PAYPAL_EXPRESS,
+            GenesisTransactionTypes::PAYSAFECARD,
+            GenesisTransactionTypes::PAYSEC_PAYIN,
+            GenesisTransactionTypes::PPRO,
+            GenesisTransactionTypes::SALE,
+            GenesisTransactionTypes::SALE_3D,
+            GenesisTransactionTypes::SOFORT,
+            GenesisTransactionTypes::SDD_SALE,
+            GenesisTransactionTypes::WECHAT
+        ];
+
+        return in_array($transactionType, $captureNotificationTransactions);
+    }
+
+    /**
+     * Retrieves the consumer's user id
+     *
+     * @return int
+     */
+    public function getCurrentUserId()
+    {
+        if ($this->getCustomerSession()->isLoggedIn()) {
+            return $this->getCustomerSession()->getId();
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function getCurrentUserIdHash($length = 30)
+    {
+        $userId = $this->getCurrentUserId();
+
+        $userHash = $userId > 0 ? sha1($userId) : $this->genTransactionId(null, $length);
+
+        return substr($userHash, 0, $length);
     }
 }
