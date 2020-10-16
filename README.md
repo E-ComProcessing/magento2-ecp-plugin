@@ -1,14 +1,14 @@
-E-ComProcessing Gateway Module for Magento 2 CE
+E-Comprocessing Gateway Module for Magento 2 CE
 =============================
 
-This is a Payment Module for Magento 2 Community Edition, that gives you the ability to process payments through E-ComProcessing's Payment Gateway - Genesis.
+This is a Payment Module for Magento 2 Community Edition, that gives you the ability to process payments through E-Comprocessing's Payment Gateway - Genesis.
 
 Requirements
 ------------
 
 * Magento 2 Community Edition 2.x (Tested upto __2.2.0__)
 * [GenesisPHP v1.8.x](https://github.com/GenesisGateway/genesis_php) - (Integrated in Module)
-* PCI-certified server in order to use ```E-ComProcessing Direct```
+* PCI-certified server in order to use ```E-Comprocessing Direct```
 
 *Note:* this module has been tested only with Magento 2 __Community Edition__, it may not work
 as intended with Magento 2 __Enterprise Edition__
@@ -70,14 +70,14 @@ Configuration
 ---------------------
 
 * Login inside the __Admin Panel__ and go to ```Stores``` -> ```Configuration``` -> ```Sales``` -> ```Payment Methods```
-* If the Payment Module Panel ```E-ComProcessing``` is not visible in the list of available Payment Methods, 
+* If the Payment Module Panel ```E-Comprocessing``` is not visible in the list of available Payment Methods, 
   go to  ```System``` -> ```Cache Management``` and clear Magento Cache by clicking on ```Flush Magento Cache```
-* Go back to ```Payment Methods``` and click the button ```Configure``` under the payment method ```E-ComProcessing Checkout``` or ```E-ComProcessing Direct``` to expand the available settings
+* Go back to ```Payment Methods``` and click the button ```Configure``` under the payment method ```E-Comprocessing Checkout``` or ```E-Comprocessing Direct``` to expand the available settings
 * Set ```Enabled``` to ```Yes```, set the correct credentials, select your prefered transaction types and additional settings and click ```Save config```
 
 Configure Magento over secured HTTPS Connection
 ---------------------
-This configuration is needed for ```E-ComProcessing Direct``` Method to be usable.
+This configuration is needed for ```E-Comprocessing Direct``` Method to be usable.
 
 Steps:
 * Ensure you have installed a valid SSL Certificate on your Web Server & you have configured your Virtual Host correctly.
