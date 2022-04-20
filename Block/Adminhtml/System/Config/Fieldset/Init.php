@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,30 +13,35 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
+namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
 
 /**
- * Renderer for E-Comprocessing banner in System Configuration
+ * Renderer for EComprocessing banner in System Configuration
  */
-class Init extends \Magento\Backend\Block\Template implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
+class Init extends \Magento\Backend\Block\Template implements
+    \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
     /**
      * @var string
      */
-    protected $_template = 'EComProcessing_Genesis::system/config/fieldset/init.phtml';
+    protected $_template = 'EComprocessing_Genesis::system/config/fieldset/init.phtml';
 
     /**
      * Render fieldset html
      *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    // @codingStandardsIgnoreStart
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         return $this->toHtml();
     }
+    // @codingStandardsIgnoreEnd
 }

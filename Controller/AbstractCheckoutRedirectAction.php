@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,33 +13,36 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller;
+namespace EComprocessing\Genesis\Controller;
 
 /**
  * Base Checkout Redirect Controller Class
  * Class AbstractCheckoutRedirectAction
- * @package EComProcessing\Genesis\Controller
+ * @package EComprocessing\Genesis\Controller
  */
-abstract class AbstractCheckoutRedirectAction extends \EComProcessing\Genesis\Controller\AbstractCheckoutAction
+abstract class AbstractCheckoutRedirectAction extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
 {
     /**
-     * @var \EComProcessing\Genesis\Helper\Checkout
+     * @var \EComprocessing\Genesis\Helper\Checkout
      */
-    private $_checkoutHelper;
+    protected $_checkoutHelper;
     /**
      * @param \Magento\Framework\App\Action\Context $context
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Sales\Model\OrderFactory $orderFactory
+     * @param \EComprocessing\Genesis\Helper\Checkout $checkoutHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Sales\Model\OrderFactory $orderFactory,
-        \EComProcessing\Genesis\Helper\Checkout $checkoutHelper
+        \EComprocessing\Genesis\Helper\Checkout $checkoutHelper
     ) {
         parent::__construct($context, $logger, $checkoutSession, $orderFactory);
         $this->_checkoutHelper = $checkoutHelper;
@@ -47,7 +50,7 @@ abstract class AbstractCheckoutRedirectAction extends \EComProcessing\Genesis\Co
 
     /**
      * Get an Instance of the Magento Checkout Helper
-     * @return \EComProcessing\Genesis\Helper\Checkout
+     * @return \EComprocessing\Genesis\Helper\Checkout
      */
     protected function getCheckoutHelper()
     {

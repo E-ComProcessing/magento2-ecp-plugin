@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,19 +13,19 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
+namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
 
 /**
- * Renderer for E-Comprocessing Checkout Panel in System Configuration
+ * Renderer for EComprocessing Checkout Panel in System Configuration
  *
  * Class CheckoutPayment
- * @package EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset
+ * @package EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
  */
-class CheckoutPayment extends \EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
+class CheckoutPayment extends \EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
 {
     /**
      * Retrieves the Module Panel Css Class
@@ -33,6 +33,6 @@ class CheckoutPayment extends \EComProcessing\Genesis\Block\Adminhtml\System\Con
      */
     protected function getBlockHeadCssClass()
     {
-        return "EComProcessingCheckout";
+        return "EComprocessingCheckout";
     }
 }

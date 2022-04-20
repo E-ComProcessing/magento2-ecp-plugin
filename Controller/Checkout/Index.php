@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,19 +13,19 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller\Checkout;
+namespace EComprocessing\Genesis\Controller\Checkout;
 
 /**
  * Front Controller for Checkout Method
  * it does a redirect to the WPF
  * Class Index
- * @package EComProcessing\Genesis\Controller\Checkout
+ * @package EComprocessing\Genesis\Controller\Checkout
  */
-class Index extends \EComProcessing\Genesis\Controller\AbstractCheckoutAction
+class Index extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
 {
     /**
      * Redirect to Genesis WPF
@@ -38,13 +38,15 @@ class Index extends \EComProcessing\Genesis\Controller\AbstractCheckoutAction
         $order = $this->getOrder();
 
         if (isset($order)) {
-            $redirectUrl = $this->getCheckoutSession()->getEcomProcessingCheckoutRedirectUrl();
+            $redirectUrl = $this->getCheckoutSession()->getEComprocessingCheckoutRedirectUrl();
 
             if (isset($redirectUrl)) {
                 $this->getResponse()->setRedirect($redirectUrl);
-            } else {
-                $this->redirectToCheckoutFragmentPayment();
+
+                return;
             }
+
+            $this->redirectToCheckoutFragmentPayment();
         }
     }
 }

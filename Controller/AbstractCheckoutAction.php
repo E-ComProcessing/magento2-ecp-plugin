@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,32 +13,43 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller;
+namespace EComprocessing\Genesis\Controller;
 
 /**
  * Base Checkout Controller Class
  * Class AbstractCheckoutAction
- * @package EComProcessing\Genesis\Controller
+ * @package EComprocessing\Genesis\Controller
  */
-abstract class AbstractCheckoutAction extends \EComProcessing\Genesis\Controller\AbstractAction
+abstract class AbstractCheckoutAction extends \EComprocessing\Genesis\Controller\AbstractAction
 {
+    const ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH = 'checkout/onepage/success';
+    const ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS = [];
+
+    const ROUTE_PATTERN_CHECKOUT_CART_PATH = 'checkout/cart';
+    const ROUTE_PATTERN_CHECKOUT_CART_ARGS = [];
+
+    const ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_PATH = 'checkout';
+    const ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_ARGS = ['_fragment' => 'payment'];
+
     /**
      * @var \Magento\Checkout\Model\Session
      */
-    private $_checkoutSession;
+    protected $_checkoutSession;
 
     /**
      * @var \Magento\Sales\Model\OrderFactory
      */
-    private $_orderFactory;
+    protected $_orderFactory;
 
     /**
      * @param \Magento\Framework\App\Action\Context $context
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Sales\Model\OrderFactory $orderFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -99,7 +110,10 @@ abstract class AbstractCheckoutAction extends \EComProcessing\Genesis\Controller
      */
     protected function redirectToCheckoutFragmentPayment()
     {
-        $this->_redirect('checkout', ['_fragment' => 'payment']);
+        $this->_redirect(
+            self::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_PATH,
+            self::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_ARGS
+        );
     }
 
     /**
@@ -108,7 +122,10 @@ abstract class AbstractCheckoutAction extends \EComProcessing\Genesis\Controller
      */
     protected function redirectToCheckoutOnePageSuccess()
     {
-        $this->_redirect('checkout/onepage/success');
+        $this->_redirect(
+            self::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH,
+            self::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS
+        );
     }
 
     /**
@@ -117,6 +134,9 @@ abstract class AbstractCheckoutAction extends \EComProcessing\Genesis\Controller
      */
     protected function redirectToCheckoutCart()
     {
-        $this->_redirect('checkout/cart');
+        $this->_redirect(
+            self::ROUTE_PATTERN_CHECKOUT_CART_PATH,
+            self::ROUTE_PATTERN_CHECKOUT_CART_ARGS
+        );
     }
 }

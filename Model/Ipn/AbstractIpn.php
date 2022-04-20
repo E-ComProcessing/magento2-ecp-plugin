@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,17 +13,20 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model\Ipn;
+namespace EComprocessing\Genesis\Model\Ipn;
+
+use EComprocessing\Genesis\Helper\Data;
+use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 
 /**
  * Base IPN Handler Class
  *
  * Class AbstractIpn
- * @package EComProcessing\Genesis\Model\Ipn
+ * @package EComprocessing\Genesis\Model\Ipn
  */
 abstract class AbstractIpn
 {
@@ -31,27 +34,27 @@ abstract class AbstractIpn
     /**
      * @var \Magento\Framework\App\Action\Context
      */
-    private $_context;
+    protected $_context;
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    private $_logger;
+    protected $_logger;
     /**
-     * @var \EComProcessing\Genesis\Helper\Data
+     * @var \EComprocessing\Genesis\Helper\Data
      */
-    private $_moduleHelper;
+    protected $_moduleHelper;
     /**
-     * @var \EComProcessing\Genesis\Model\Config
+     * @var \EComprocessing\Genesis\Model\Config
      */
-    private $_configHelper;
+    protected $_configHelper;
     /**
      * @var \Magento\Sales\Model\OrderFactory
      */
-    private $_orderFactory;
+    protected $_orderFactory;
     /**
      * @var array
      */
-    private $_ipnRequest;
+    protected $_ipnRequest;
     /**
      * @var \Magento\Sales\Model\Order
      */
@@ -84,7 +87,7 @@ abstract class AbstractIpn
      * @param \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender
      * @param \Magento\Sales\Model\Order\Email\Sender\CreditmemoSender $creditMemoSender
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \EComProcessing\Genesis\Helper\Data $moduleHelper
+     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
      * @param array $data
      */
     public function __construct(
@@ -93,7 +96,7 @@ abstract class AbstractIpn
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\CreditmemoSender $creditMemoSender,
         \Psr\Log\LoggerInterface $logger,
-        \EComProcessing\Genesis\Helper\Data $moduleHelper,
+        \EComprocessing\Genesis\Helper\Data $moduleHelper,
         array $data = []
     ) {
         $this->_context = $context;
@@ -134,7 +137,7 @@ abstract class AbstractIpn
     {
         $this->_configHelper->initGatewayClient();
 
-        $notification = new \Genesis\API\Notification(
+        $notification = $this->getModuleHelper()->createNotificationObject(
             $this->getIpnRequestData()
         );
 
@@ -146,19 +149,22 @@ abstract class AbstractIpn
 
         if (!isset($responseObject->unique_id)) {
             return null;
-        } else {
-            $this->setOrderByReconcile($responseObject);
-
-            try {
-                $this->processNotification($responseObject);
-            } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                $comment = $this->createIpnComment(__('Note: %1', $e->getMessage()), true);
-                $comment->save();
-                throw $e;
-            }
-
-            return $notification->generateResponse();
         }
+
+        $this->setOrderByReconcile($responseObject);
+
+        try {
+            $this->processNotification($responseObject);
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            $comment = $this->createIpnComment(
+                __('Note: %1', $e->getMessage()),
+                true
+            );
+            $comment->save();
+            throw $e;
+        }
+
+        return $notification->generateResponse();
     }
 
     /**
@@ -170,7 +176,9 @@ abstract class AbstractIpn
     protected function getOrder()
     {
         if (!isset($this->_order) || empty($this->_order->getId())) {
-            throw new \Exception('IPN-Order is not set to an instance of an object');
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('IPN-Order is not set to an instance of an object')
+            );
         }
 
         return $this->_order;
@@ -190,18 +198,22 @@ abstract class AbstractIpn
      * Initializes the Order Object from the transaction in the Reconcile response object
      * @param $responseObject
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    private function setOrderByReconcile($responseObject)
+    protected function setOrderByReconcile($responseObject)
     {
         $transaction_id = $responseObject->transaction_id;
         list($incrementId, $hash) = explode('_', $transaction_id);
 
         $this->_order = $this->getOrderFactory()->create()->loadByIncrementId(
-            intval($incrementId)
+            (int) $incrementId
         );
 
         if (!$this->_order->getId()) {
-            throw new \Exception(sprintf('Wrong order ID: "%s".', $incrementId));
+            throw new \Magento\Framework\Exception\LocalizedException(
+                sprintf('Wrong order ID: "%s".', $incrementId)
+            );
         }
     }
 
@@ -224,7 +236,7 @@ abstract class AbstractIpn
 
     /**
      * Get an instance of the Module Config Helper Object
-     * @return \EComProcessing\Genesis\Model\Config
+     * @return \EComprocessing\Genesis\Model\Config
      */
     protected function getConfigHelper()
     {
@@ -251,7 +263,7 @@ abstract class AbstractIpn
 
     /**
      * Get an Instance of the Module Helper Object
-     * @return \EComProcessing\Genesis\Helper\Data
+     * @return \EComprocessing\Genesis\Helper\Data
      */
     protected function getModuleHelper()
     {
@@ -284,13 +296,51 @@ abstract class AbstractIpn
     protected function getShouldCloseCurrentTransaction($responseObject)
     {
         $voidableTransactions = [
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE,
-            \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D
+            GenesisTransactionTypes::AUTHORIZE,
+            GenesisTransactionTypes::AUTHORIZE_3D,
+            GenesisTransactionTypes::GOOGLE_PAY,
+            GenesisTransactionTypes::PAY_PAL,
+            GenesisTransactionTypes::APPLE_PAY,
         ];
 
-        /*
-         *  It the last transaction is closed, it cannot be voided
-         */
+        if ($this->getModuleHelper()->isTransactionWithCustomAttribute($responseObject->transaction_type)) {
+            return !$this->getModuleHelper()->isSelectedAuthorizePaymentType($responseObject->transaction_type);
+        }
+
         return !in_array($responseObject->transaction_type, $voidableTransactions);
+    }
+
+    /**
+     * Extract the Message from Genesis response
+     *
+     * @param \stdClass $transactionResponse
+     *
+     * @return string
+     */
+    protected function getTransactionMessage($transactionResponse)
+    {
+        $uniqueId          = $transactionResponse->unique_id;
+        $transactionStatus = $transactionResponse->status;
+        $additionalNotes   = isset($transactionResponse->message) ? "({$transactionResponse->message})" : '';
+        $transactionType   = isset($transactionResponse->transaction_type) ?
+            $transactionResponse->transaction_type : __('unknown');
+
+        $messageArray = [
+            __('Module'),
+            $this->getConfigHelper()->getCheckoutTitle(),
+            __('Notification Received'),
+            'UniqueID',
+            $uniqueId,
+            __('Transaction type'),
+            strtoupper($transactionType),
+            ' - ',
+            strtoupper($transactionStatus)
+        ];
+
+        if (!empty($additionalNotes)) {
+            array_push($messageArray, $additionalNotes);
+        }
+
+        return implode(' ', $messageArray);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -30,11 +30,11 @@ define(
         rendererList.push(
             {
                 type: 'ecomprocessing_checkout',
-                component: 'EComProcessing_Genesis/js/view/payment/method-renderer/checkout-method'
+                component: 'EComprocessing_Genesis/js/view/payment/method-renderer/checkout-method'
             },
             {
                 type: 'ecomprocessing_direct',
-                component: 'EComProcessing_Genesis/js/view/payment/method-renderer/direct-method'
+                component: 'EComprocessing_Genesis/js/view/payment/method-renderer/direct-method'
             }
         );
 

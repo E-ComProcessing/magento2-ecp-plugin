@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,28 +13,28 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller;
+namespace EComprocessing\Genesis\Controller;
 
 /**
  * Base Controller Class
  * Class AbstractAction
- * @package EComProcessing\Genesis\Controller
+ * @package EComprocessing\Genesis\Controller
  */
 abstract class AbstractAction extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Framework\App\Action\Context
      */
-    private $_context;
+    protected $_context;
 
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    private $_logger;
+    protected $_logger;
 
     /**
      * @param \Magento\Framework\App\Action\Context $context
@@ -110,8 +110,8 @@ abstract class AbstractAction extends \Magento\Framework\App\Action\Action
             return $post[$key];
         } elseif (isset($key)) {
             return null;
-        } else {
-            return $post;
         }
+
+        return $post;
     }
 }

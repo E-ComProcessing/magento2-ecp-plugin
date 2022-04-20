@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,18 +13,18 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model\Ipn;
+namespace EComprocessing\Genesis\Model\Ipn;
 
 /**
  * Direct Method IPN Handler Class
  * Class DirectIpn
- * @package EComProcessing\Genesis\Model\Ipn
+ * @package EComprocessing\Genesis\Model\Ipn
  */
-class DirectIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
+class DirectIpn extends \EComprocessing\Genesis\Model\Ipn\AbstractIpn
 {
     /**
      * Gets payment method code
@@ -32,7 +32,7 @@ class DirectIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
      */
     protected function getPaymentMethodCode()
     {
-        return \EComProcessing\Genesis\Model\Method\Direct::CODE;
+        return \EComprocessing\Genesis\Model\Method\Direct::CODE;
     }
 
     /**
@@ -48,6 +48,11 @@ class DirectIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
             $responseObject->unique_id,
             $responseObject,
             false
+        );
+
+        $this->createIpnComment(
+            $this->getTransactionMessage($responseObject),
+            true
         );
 
         $payment
@@ -66,31 +71,26 @@ class DirectIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
                 false
             )
             ->setPreparedMessage(
-                $this->createIpnComment(
-                    $responseObject->message
-                )
+                __('Module') . ' ' . $this->getConfigHelper()->getCheckoutTitle()
             )
             ->resetTransactionAdditionalInfo();
 
-        switch ($responseObject->transaction_type) {
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
-            case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
-                $payment->registerAuthorizationNotification($responseObject->amount);
-                break;
-            case \Genesis\API\Constants\Transaction\Types::SALE:
-            case \Genesis\API\Constants\Transaction\Types::SALE_3D:
-                $payment->registerCaptureNotification($responseObject->amount);
-                break;
-            default:
-                break;
+        if ($responseObject->status == \Genesis\API\Constants\Transaction\States::APPROVED) {
+            switch ($responseObject->transaction_type) {
+                case \Genesis\API\Constants\Transaction\Types::AUTHORIZE:
+                case \Genesis\API\Constants\Transaction\Types::AUTHORIZE_3D:
+                    $payment->registerAuthorizationNotification($responseObject->amount);
+                    break;
+                case \Genesis\API\Constants\Transaction\Types::SALE:
+                case \Genesis\API\Constants\Transaction\Types::SALE_3D:
+                    $payment->registerCaptureNotification($responseObject->amount);
+                    break;
+                default:
+                    break;
+            }
         }
 
-        //if (!$this->getOrder()->getEmailSent()) {
-        //    $this->_orderSender->send($this->getOrder());
-        //}
-
         $payment->save();
-
 
         $this->getModuleHelper()->setOrderState(
             $this->getOrder(),

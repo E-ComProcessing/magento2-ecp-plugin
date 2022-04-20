@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (C) 2016 E-Comprocessing
+Copyright (C) 2018 E-Comprocessing Ltd.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 @author      E-Comprocessing
-@copyright   2016 E-Comprocessing Ltd.
+@copyright   2018 E-Comprocessing Ltd.
 @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment">
-            <group id="EComProcessing_Genesis_init" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
-                <frontend_model>EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Init</frontend_model>
+            <group id="ecomprocessing_genesis_init" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                <frontend_model>EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Init</frontend_model>
             </group>
-            <group id="EComProcessing_Genesis" translate="label comment" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>E-Comprocessing</label>
+            <group id="ecomprocessing_genesis" translate="label comment" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>ecomprocessing</label>
                 <fieldset_css>complex</fieldset_css>
                 <comment>Accept payments through E-Comprocessing's Payment Gateway - Genesis</comment>
-                <include path="EComProcessing_Genesis::system/method_checkout.xml"/>
-                <include path="EComProcessing_Genesis::system/method_direct.xml"/>
+                <include path="EComprocessing_Genesis::system/method_checkout.xml"/>
+                <include path="EComprocessing_Genesis::system/method_direct.xml"/>
             </group>
         </section>
     </system>

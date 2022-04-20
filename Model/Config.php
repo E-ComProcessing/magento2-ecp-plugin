@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model;
+namespace EComprocessing\Genesis\Model;
 
 use Magento\Store\Model\ScopeInterface;
 
@@ -123,8 +123,6 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
      * @param string $key
      * @param null $storeId
      * @return null|string
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getValue($key, $storeId = null)
     {
@@ -136,7 +134,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
                     $value = $this->getScopeConfig()->getValue(
                         $path,
                         ScopeInterface::SCOPE_STORE,
-                        $this->_storeId
+                        $storeId ?: $this->_storeId
                     );
                     return $value;
                 }
@@ -193,7 +191,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
         return !empty($this->getUserName()) &&
                !empty($this->getPassword()) &&
                !empty($this->getTransactionTypes()) &&
-               ($methodCode != \EComProcessing\Genesis\Model\Method\Direct::CODE || !empty($this->getToken()));
+               ($methodCode != \EComprocessing\Genesis\Model\Method\Direct::CODE || !empty($this->getToken()));
     }
 
     /**
@@ -220,6 +218,19 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
         $methodCode = $methodCode?: $this->_methodCode;
 
         return $this->isFlagChecked($methodCode, 'active');
+    }
+
+    /**
+     * Check whether tokenization is enabled
+     *
+     * @param string $methodCode Method code
+     * @return bool
+     */
+    public function isTokenizationEnabled($methodCode = null)
+    {
+        $methodCode = $methodCode?: $this->_methodCode;
+
+        return $this->isFlagChecked($methodCode, 'tokenization');
     }
 
     /**
@@ -312,11 +323,14 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
     /**
      * Get if specific currencies are allowed
      * (not all global allowed currencies)
-     * @return array
+     * @return bool
      */
     public function getAreAllowedSpecificCurrencies()
     {
-        return $this->isFlagChecked($this->_methodCode, 'allow_specific_currency');
+        return $this->isFlagChecked(
+            $this->_methodCode,
+            'allow_specific_currency'
+        );
     }
 
     /**
@@ -332,5 +346,18 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
                 $this->getValue('specific_currencies')
             )
         );
+    }
+
+    /**
+     * Checks whether an email has to be sent after successful payment
+     *
+     * @param string|null $methodCode
+     * @return bool
+     */
+    public function getPaymentConfirmationEmailEnabled($methodCode = null)
+    {
+        $methodCode = $methodCode?: $this->_methodCode;
+
+        return $this->isFlagChecked($methodCode, 'payment_confirmation_email_enabled');
     }
 }

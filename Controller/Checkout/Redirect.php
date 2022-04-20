@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,19 +13,19 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller\Checkout;
+namespace EComprocessing\Genesis\Controller\Checkout;
 
 /**
  * Return Action Controller (used to handle Redirects from the Payment Gateway)
  *
  * Class Redirect
- * @package EComProcessing\Genesis\Controller\Checkout
+ * @package EComprocessing\Genesis\Controller\Checkout
  */
-class Redirect extends \EComProcessing\Genesis\Controller\AbstractCheckoutRedirectAction
+class Redirect extends \EComprocessing\Genesis\Controller\AbstractCheckoutRedirectAction
 {
     /**
      * Handle the result from the Payment Gateway
@@ -35,18 +35,18 @@ class Redirect extends \EComProcessing\Genesis\Controller\AbstractCheckoutRedire
     public function execute()
     {
         switch ($this->getReturnAction()) {
-            case 'success':
+            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS:
                 $this->executeSuccessAction();
                 break;
 
-            case 'cancel':
+            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL:
                 $this->getMessageManager()->addWarning(
                     __("You have successfully canceled your order")
                 );
                 $this->executeCancelAction();
                 break;
 
-            case 'failure':
+            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE:
                 $this->getMessageManager()->addError(
                     __("Please, check your input and try again!")
                 );

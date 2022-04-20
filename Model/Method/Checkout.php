@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,102 +13,87 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model\Method;
+namespace EComprocessing\Genesis\Model\Method;
 
+use EComprocessing\Genesis\Helper\Data;
 use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes;
 use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes;
+use Genesis\API\Constants\Transaction\States;
 use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 use Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
+use Genesis\API\Request;
+use Genesis\Genesis;
+use Magento\Customer\Api\Data\CustomerInterface;
 
 /**
  * Checkout Payment Method Model Class
  * Class Checkout
- * @package EComProcessing\Genesis\Model\Method
+ * @package EComprocessing\Genesis\Model\Method
  */
-class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
+class Checkout extends Base
 {
-    use \EComProcessing\Genesis\Model\Traits\OnlinePaymentMethod;
 
-    const CODE = 'ecomprocessing_checkout';
+    const CODE                     = 'ecomprocessing_checkout';
+    const CUSTOMER_CONSUMER_ID_KEY = 'consumer_id';
+
     /**
      * Checkout Method Code
      */
     protected $_code = self::CODE;
-
-    protected $_canOrder                    = true;
-    protected $_isGateway                   = true;
-    protected $_canCapture                  = true;
-    protected $_canCapturePartial           = true;
-    protected $_canRefund                   = true;
-    protected $_canCancelInvoice            = true;
-    protected $_canVoid                     = true;
-    protected $_canRefundInvoicePartial     = true;
-    protected $_canAuthorize                = true;
-    protected $_isInitializeNeeded          = false;
-
-    /**
-     * Get Instance of the Magento Code Logger
-     * @return \Psr\Log\LoggerInterface
-     */
-    protected function getLogger()
-    {
-        return $this->_logger;
-    }
 
     /**
      * Checkout constructor.
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\App\Action\Context $actionContext
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
-     * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
-     * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Payment\Model\Method\Logger $logger
+     * @param \EComprocessing\Genesis\Logger\Logger $loggerHelper
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \EComProcessing\Genesis\Helper\Data $moduleHelper
+     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param array $data
+     *
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\App\Action\Context $actionContext,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
-        \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
-        \Magento\Payment\Helper\Data $paymentData,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Payment\Model\Method\Logger  $logger,
+        \EComprocessing\Genesis\Logger\Logger  $loggerHelper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \EComProcessing\Genesis\Helper\Data $moduleHelper,
+        \EComprocessing\Genesis\Helper\Data $moduleHelper,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $loggerHelper->setFilename('checkout');
+
         parent::__construct(
             $context,
             $registry,
-            $extensionFactory,
-            $customAttributeFactory,
-            $paymentData,
             $scopeConfig,
-            $logger,
+            $loggerHelper,
             $resource,
             $resourceCollection,
             $data
         );
-        $this->_actionContext = $actionContext;
-        $this->_storeManager = $storeManager;
-        $this->_checkoutSession = $checkoutSession;
-        $this->_moduleHelper = $moduleHelper;
-        $this->_configHelper =
+
+        $this->_actionContext               = $actionContext;
+        $this->_storeManager                = $storeManager;
+        $this->_checkoutSession             = $checkoutSession;
+        $this->_moduleHelper                = $moduleHelper;
+        $this->_customerRepositoryInterface = $customerRepositoryInterface;
+        $this->_configHelper                =
             $this->getModuleHelper()->getMethodConfig(
                 $this->getCode()
             );
@@ -129,34 +114,60 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function getCheckoutTransactionTypes()
     {
-        $processed_list = array();
+        $processed_list = [];
+        $alias_map      = [];
 
         $selected_types = $this->getConfigHelper()->getTransactionTypes();
+        $ppro_suffix    = Data::PPRO_TRANSACTION_SUFFIX;
+        $methods        = GenesisPaymentMethods::getMethods();
 
-        $alias_map = array(
-            GenesisPaymentMethods::EPS         => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::GIRO_PAY    => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::PRZELEWY24  => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::QIWI        => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::SAFETY_PAY  => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::TELEINGRESO => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::TRUST_PAY   => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::BCMC        => GenesisTransactionTypes::PPRO,
-            GenesisPaymentMethods::MYBANK      => GenesisTransactionTypes::PPRO
-        );
+        foreach ($methods as $method) {
+            $alias_map[$method . $ppro_suffix] = GenesisTransactionTypes::PPRO;
+        }
+
+        $alias_map = array_merge($alias_map, [
+            Data::GOOGLE_PAY_TRANSACTION_PREFIX . Data::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE =>
+                GenesisTransactionTypes::GOOGLE_PAY,
+            Data::GOOGLE_PAY_TRANSACTION_PREFIX . Data::GOOGLE_PAY_PAYMENT_TYPE_SALE      =>
+                GenesisTransactionTypes::GOOGLE_PAY,
+            Data::PAYPAL_TRANSACTION_PREFIX . Data::PAYPAL_PAYMENT_TYPE_AUTHORIZE         =>
+                GenesisTransactionTypes::PAY_PAL,
+            Data::PAYPAL_TRANSACTION_PREFIX . Data::PAYPAL_PAYMENT_TYPE_SALE              =>
+                GenesisTransactionTypes::PAY_PAL,
+            Data::PAYPAL_TRANSACTION_PREFIX . Data::PAYPAL_PAYMENT_TYPE_EXPRESS           =>
+                GenesisTransactionTypes::PAY_PAL,
+            Data::APPLE_PAY_TRANSACTION_PREFIX . Data::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE   =>
+                GenesisTransactionTypes::APPLE_PAY,
+            Data::APPLE_PAY_TRANSACTION_PREFIX . Data::APPLE_PAY_PAYMENT_TYPE_SALE        =>
+                GenesisTransactionTypes::APPLE_PAY,
+        ]);
 
         foreach ($selected_types as $selected_type) {
-            if (array_key_exists($selected_type, $alias_map)) {
-                $transaction_type = $alias_map[$selected_type];
-
-                $processed_list[$transaction_type]['name'] = $transaction_type;
-
-                $processed_list[$transaction_type]['parameters'][] = array(
-                    'payment_method' => $selected_type
-                );
-            } else {
+            if (!array_key_exists($selected_type, $alias_map)) {
                 $processed_list[] = $selected_type;
+
+                continue;
             }
+
+            $transaction_type = $alias_map[$selected_type];
+
+            $processed_list[$transaction_type]['name'] = $transaction_type;
+
+            // WPF Custom Attribute
+            $key = $this->getCustomParameterKey($transaction_type);
+
+            $processed_list[$transaction_type]['parameters'][] = [
+                $key => str_replace(
+                    [
+                        $ppro_suffix,
+                        Data::GOOGLE_PAY_TRANSACTION_PREFIX,
+                        Data::PAYPAL_TRANSACTION_PREFIX,
+                        Data::APPLE_PAY_TRANSACTION_PREFIX,
+                    ],
+                    '',
+                    $selected_type
+                )
+            ];
         }
 
         return $processed_list;
@@ -177,57 +188,11 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             $data
         );
 
-        $genesis->execute();
+        $this->getModuleHelper()->executeGatewayRequest($genesis);
 
-        return $genesis->response()->getResponseObject();
-    }
-
-    /**
-     * Prepares Genesis Request with basic request data
-     *
-     * @param array $data
-     * @return \Genesis\Genesis
-     */
-    protected function prepareGenesisWPFRequest($data)
-    {
-        $genesis = new \Genesis\Genesis('WPF\Create');
-        $genesis
-            ->request()
-                ->setTransactionId($data['transaction_id'])
-                ->setCurrency($data['order']['currency'])
-                ->setAmount($data['order']['amount'])
-                ->setUsage($data['order']['usage'])
-                ->setDescription($data['order']['description'])
-                ->setCustomerPhone(strval($data['order']['billing']->getTelephone()))
-                ->setCustomerEmail(strval($data['order']['customer']['email']))
-                ->setNotificationUrl($data['urls']['notify'])
-                ->setReturnSuccessUrl($data['urls']['return_success'])
-                ->setReturnFailureUrl($data['urls']['return_failure'])
-                ->setReturnCancelUrl($data['urls']['return_cancel'])
-                ->setBillingFirstName(strval($data['order']['billing']->getFirstname()))
-                ->setBillingLastName(strval($data['order']['billing']->getLastname()))
-                ->setBillingAddress1(strval($data['order']['billing']->getStreetLine(1)))
-                ->setBillingAddress2(strval($data['order']['billing']->getStreetLine(2)))
-                ->setBillingZipCode(strval($data['order']['billing']->getPostcode()))
-                ->setBillingCity(strval($data['order']['billing']->getCity()))
-                ->setBillingState(strval($data['order']['billing']->getRegionCode()))
-                ->setBillingCountry(strval($data['order']['billing']->getCountryId()))
-                ->setLanguage($data['order']['language']);
-
-        if (!empty($data['order']['shipping'])) {
-            $genesis
-                ->request()
-                    ->setShippingFirstName(strval($data['order']['shipping']->getFirstname()))
-                    ->setShippingLastName(strval($data['order']['shipping']->getLastname()))
-                    ->setShippingAddress1(strval($data['order']['shipping']->getStreetLine(1)))
-                    ->setShippingAddress2(strval($data['order']['shipping']->getStreetLine(2)))
-                    ->setShippingZipCode(strval($data['order']['shipping']->getPostcode()))
-                    ->setShippingCity(strval($data['order']['shipping']->getCity()))
-                    ->setShippingState(strval($data['order']['shipping']->getRegionCode()))
-                    ->setShippingCountry(strval($data['order']['shipping']->getCountryId()));
-        }
-
-        return $genesis;
+        return $this->getModuleHelper()->getGatewayResponseObject(
+            $genesis->response()
+        );
     }
 
     /**
@@ -274,6 +239,19 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                         'customer_account_id' => $this->getModuleHelper()->getCurrentUserIdHash()
                     ];
                     break;
+                case GenesisTransactionTypes::KLARNA_AUTHORIZE:
+                    $itemsObject = $this->getModuleHelper()->getKlarnaCustomParamItems($data['order']['orderObject']);
+                    $parameters = $itemsObject->toArray();
+                    break;
+                case GenesisTransactionTypes::TRUSTLY_SALE:
+                    $helper        = $this->getModuleHelper();
+                    $userId        = $helper->getCurrentUserId();
+                    $trustlyUserId = empty($userId) ? $helper->getCurrentUserIdHash() : $userId;
+
+                    $parameters = [
+                        'user_id' => $trustlyUserId
+                    ];
+                    break;
             }
 
             if (!isset($parameters)) {
@@ -285,6 +263,252 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 $parameters
             );
         }
+    }
+
+    /**
+     * Prepares Genesis Request with basic request data
+     *
+     * @param array $data
+     *
+     * @return Genesis
+     * @throws \Genesis\Exceptions\InvalidMethod
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    protected function prepareGenesisWPFRequest($data)
+    {
+        $genesis = new \Genesis\Genesis('WPF\Create');
+
+        $genesis
+            ->request()
+                ->setTransactionId(
+                    $data['transaction_id']
+                )
+                ->setCurrency(
+                    $data['order']['currency']
+                )
+                ->setAmount(
+                    $data['order']['amount']
+                )
+                ->setUsage(
+                    $data['order']['usage']
+                )
+                ->setDescription(
+                    $data['order']['description']
+                )
+                ->setCustomerPhone(
+                    (string) $data['order']['billing']->getTelephone()
+                )
+                ->setCustomerEmail(
+                    (string) $data['order']['customer']['email']
+                )
+                ->setLanguage(
+                    $data['order']['language']
+                );
+
+        if ($this->getConfigHelper()->isTokenizationEnabled()) {
+            $this->prepareTokenization(
+                $genesis,
+                $data['order']['customer']['id'],
+                $data['order']['customer']['email']
+            );
+        }
+
+        $genesis
+            ->request()
+                ->setNotificationUrl(
+                    $data['urls']['notify']
+                )
+                ->setReturnSuccessUrl(
+                    $data['urls']['return_success']
+                )
+                ->setReturnPendingUrl(
+                    $data['urls']['return_success']
+                )
+                ->setReturnFailureUrl(
+                    $data['urls']['return_failure']
+                )
+                ->setReturnCancelUrl(
+                    $data['urls']['return_cancel']
+                );
+
+        $genesis
+            ->request()
+                ->setBillingFirstName(
+                    (string) $data['order']['billing']->getFirstname()
+                )
+                ->setBillingLastName(
+                    (string) $data['order']['billing']->getLastname()
+                )
+                ->setBillingAddress1(
+                    (string) $data['order']['billing']->getStreetLine(1)
+                )
+                ->setBillingAddress2(
+                    (string) $data['order']['billing']->getStreetLine(2)
+                )
+                ->setBillingZipCode(
+                    (string) $data['order']['billing']->getPostcode()
+                )
+                ->setBillingCity(
+                    (string) $data['order']['billing']->getCity()
+                )
+                ->setBillingState(
+                    (string) $data['order']['billing']->getRegionCode()
+                )
+                ->setBillingCountry(
+                    (string) $data['order']['billing']->getCountryId()
+                );
+
+        if (!empty($data['order']['shipping'])) {
+            $genesis
+                ->request()
+                    ->setShippingFirstName(
+                        (string) $data['order']['shipping']->getFirstname()
+                    )
+                    ->setShippingLastName(
+                        (string) $data['order']['shipping']->getLastname()
+                    )
+                    ->setShippingAddress1(
+                        (string) $data['order']['shipping']->getStreetLine(1)
+                    )
+                    ->setShippingAddress2(
+                        (string) $data['order']['shipping']->getStreetLine(2)
+                    )
+                    ->setShippingZipCode(
+                        (string) $data['order']['shipping']->getPostcode()
+                    )
+                    ->setShippingCity(
+                        (string) $data['order']['shipping']->getCity()
+                    )
+                    ->setShippingState(
+                        (string) $data['order']['shipping']->getRegionCode()
+                    )
+                    ->setShippingCountry(
+                        (string) $data['order']['shipping']->getCountryId()
+                    );
+        }
+
+        return $genesis;
+    }
+
+    /**
+     * @param $customerId
+     * @param $customerEmail
+     *
+     * @return string|null
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    protected function getGatewayConsumerIdFor($customerId, $customerEmail)
+    {
+        if ($customerId === null) {
+            return null;
+        }
+        $customer = $this->_customerRepositoryInterface->getById($customerId);
+        $attr = $this->getCustomAttributeConsumerId($customer);
+
+        return !empty($attr[$customerEmail]) ? $attr[$customerEmail] : null;
+    }
+
+    /**
+     * @param CustomerInterface $customer
+     *
+     * @return array
+     */
+    protected function getCustomAttributeConsumerId(CustomerInterface $customer)
+    {
+        $attr = $customer->getCustomAttribute(self::CUSTOMER_CONSUMER_ID_KEY);
+        if (empty($attr)) {
+            return [];
+        }
+        $attr = json_decode($attr->getValue(), true);
+
+        return is_array($attr) ? $attr : [];
+    }
+
+    /**
+     * @param $customerId
+     * @param $customerEmail
+     * @param $consumerId
+     *
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\State\InputMismatchException
+     */
+    protected function setGatewayConsumerIdFor($customerId, $customerEmail, $consumerId)
+    {
+        if ($customerId === null) {
+            return;
+        }
+        $customer = $this->_customerRepositoryInterface->getById($customerId);
+
+        $attr = $this->getCustomAttributeConsumerId($customer);
+        $attr[$customerEmail] = $consumerId;
+
+        $customer->setCustomAttribute(self::CUSTOMER_CONSUMER_ID_KEY, json_encode($attr));
+
+        $this->_customerRepositoryInterface->save($customer);
+    }
+
+    /**
+     * @param Genesis $genesis
+     * @param $customerId
+     * @param $customerEmail
+     *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    protected function prepareTokenization(Genesis $genesis, $customerId, $customerEmail)
+    {
+        $consumerId = $this->getGatewayConsumerIdFor($customerId, $customerEmail);
+
+        if (empty($consumerId)) {
+            $consumerId = $this->retrieveConsumerIdFromEmail($customerEmail);
+        }
+
+        if ($consumerId) {
+            $genesis->request()->setConsumerId($consumerId);
+        }
+
+        $genesis->request()->setRememberCard(true);
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return null|int
+     */
+    protected function retrieveConsumerIdFromEmail($email)
+    {
+        try {
+            $genesis = new Genesis('NonFinancial\Consumers\Retrieve');
+            $genesis->request()->setEmail($email);
+
+            $genesis->execute();
+
+            $response = $genesis->response()->getResponseObject();
+
+            if ($this->isErrorResponse($response)) {
+                return null;
+            }
+
+            return $response->consumer_id;
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    /**
+     * @param $response
+     *
+     * @return bool
+     */
+    protected function isErrorResponse($response)
+    {
+        $state = new States($response->status);
+
+        return $state->isError();
     }
 
     /**
@@ -303,6 +527,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             '0'
         );
 
+        // @codingStandardsIgnoreStart
         $data = [
             'transaction_id' =>
                 $this->getModuleHelper()->genTransactionId(
@@ -319,12 +544,14 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                     $order
                 ),
                 'customer' => [
+                    'id'    => $order->getCustomerId(),
                     'email' => $this->getCheckoutSession()->getQuote()->getCustomerEmail(),
                 ],
                 'billing' =>
                     $order->getBillingAddress(),
                 'shipping' =>
-                    $order->getShippingAddress()
+                    $order->getShippingAddress(),
+                'orderObject' => $order
             ],
             'urls' => [
                 'notify' =>
@@ -334,20 +561,21 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 'return_success' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        'success'
+                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
                     ),
                 'return_cancel'  =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        'cancel'
+                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
                     ),
                 'return_failure' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        'failure'
+                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
                     ),
             ]
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->getConfigHelper()->initGatewayClient();
 
@@ -363,7 +591,7 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                     $responseObject
                 );
 
-                $this->getCheckoutSession()->setEcomProcessingLastCheckoutError(
+                $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
                     $errorMessage
                 );
 
@@ -379,7 +607,15 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 $responseObject
             );
 
-            $this->getCheckoutSession()->setEcomProcessingCheckoutRedirectUrl(
+            if (!empty($responseObject->consumer_id)) {
+                $this->setGatewayConsumerIdFor(
+                    $data['order']['customer']['id'],
+                    $data['order']['customer']['email'],
+                    $responseObject->consumer_id
+                );
+            }
+
+            $this->setRedirectUrl(
                 $responseObject->redirect_url
             );
 
@@ -389,12 +625,14 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
                 $e->getMessage()
             );
 
-            $this->getCheckoutSession()->setEcomProcessingLastCheckoutError(
+            $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
                 $e->getMessage()
             );
 
             $this->getModuleHelper()->maskException($e);
         }
+
+        return $this;
     }
 
     /**
@@ -442,117 +680,6 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     /**
-     * Payment refund
-     *
-     * @param \Magento\Payment\Model\InfoInterface $payment
-     * @param float $amount
-     * @return $this
-     * @throws \Magento\Framework\Webapi\Exception
-     */
-    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
-    {
-        /** @var \Magento\Sales\Model\Order $order */
-        $order = $payment->getOrder();
-
-        $this->getLogger()->debug('Refund transaction for order #' . $order->getIncrementId());
-
-        $captureTransaction = $this->getModuleHelper()->lookUpCaptureTransaction(
-            $payment
-        );
-
-        if (!isset($captureTransaction)) {
-            $errorMessage = 'Refund transaction for order #' .
-                $order->getIncrementId() .
-                ' cannot be finished (No Capture Transaction exists)';
-
-            $this->getLogger()->error(
-                $errorMessage
-            );
-
-            $this->getMessageManager()->addError($errorMessage);
-
-            $this->getModuleHelper()->throwWebApiException(
-                $errorMessage
-            );
-        }
-
-        try {
-            $this->doRefund($payment, $amount, $captureTransaction);
-        } catch (\Exception $e) {
-            $this->getLogger()->error(
-                $e->getMessage()
-            );
-
-            $this->getMessageManager()->addError(
-                $e->getMessage()
-            );
-
-            $this->getModuleHelper()->maskException($e);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Payment Cancel
-     * @param \Magento\Payment\Model\InfoInterface $payment
-     * @return $this
-     */
-    public function cancel(\Magento\Payment\Model\InfoInterface $payment)
-    {
-        $this->void($payment);
-
-        return $this;
-    }
-
-    /**
-     * Void Payment
-     * @param \Magento\Payment\Model\InfoInterface $payment
-     * @return $this
-     * @throws \Magento\Framework\Webapi\Exception
-     */
-    public function void(\Magento\Payment\Model\InfoInterface $payment)
-    {
-        /** @var \Magento\Sales\Model\Order $order */
-
-        $order = $payment->getOrder();
-
-        $this->getLogger()->debug('Void transaction for order #' . $order->getIncrementId());
-
-        $referenceTransaction = $this->getModuleHelper()->lookUpVoidReferenceTransaction(
-            $payment
-        );
-
-        if ($referenceTransaction->getTxnType() == \Magento\Sales\Model\Order\Payment\Transaction::TYPE_AUTH) {
-            $authTransaction = $referenceTransaction;
-        } else {
-            $authTransaction = $this->getModuleHelper()->lookUpAuthorizationTransaction(
-                $payment
-            );
-        }
-
-        if (!isset($authTransaction) || !isset($referenceTransaction)) {
-            $errorMessage = 'Void transaction for order #' .
-                            $order->getIncrementId() .
-                            ' cannot be finished (No Authorize / Capture Transaction exists)';
-
-            $this->getLogger()->error($errorMessage);
-            $this->getModuleHelper()->throwWebApiException($errorMessage);
-        }
-
-        try {
-            $this->doVoid($payment, $authTransaction, $referenceTransaction);
-        } catch (\Exception $e) {
-            $this->getLogger()->error(
-                $e->getMessage()
-            );
-            $this->getModuleHelper()->maskException($e);
-        }
-
-        return $this;
-    }
-
-    /**
      * Determines method's availability based on config data and quote amount
      *
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
@@ -576,5 +703,32 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             $this->getCode(),
             $currencyCode
         );
+    }
+
+    /**
+     * Returns payment method/type based on transaction type
+     *
+     * @param string $transactionType Transaction type
+     *
+     * @return string
+     */
+    protected function getCustomParameterKey($transactionType)
+    {
+        switch ($transactionType) {
+            case GenesisTransactionTypes::PPRO:
+                $result = 'payment_method';
+                break;
+            case GenesisTransactionTypes::PAY_PAL:
+                $result = 'payment_type';
+                break;
+            case GenesisTransactionTypes::GOOGLE_PAY:
+            case GenesisTransactionTypes::APPLE_PAY:
+                $result = 'payment_subtype';
+                break;
+            default:
+                $result = 'unknown';
+        }
+
+        return $result;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,20 +13,29 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Helper;
+namespace EComprocessing\Genesis\Helper;
 
+use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
+use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
+use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
 use \Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
-use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\CreditmemoFactory;
+use Magento\Sales\Model\Service\CreditmemoService;
 
 /**
  * Helper Class for all Payment Methods
  *
  * Class Data
- * @package EComProcessing\Genesis\Helper
+ * @package EComprocessing\Genesis\Helper
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -36,6 +45,29 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const ADDITIONAL_INFO_KEY_TRANSACTION_TYPE = 'transaction_type';
     const ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   = 'terminal_token';
     const ADDITIONAL_INFO_KEY_REDIRECT_URL     = 'redirect_url';
+
+    const ACTION_RETURN_SUCCESS = 'success';
+    const ACTION_RETURN_CANCEL  = 'cancel';
+    const ACTION_RETURN_FAILURE = 'failure';
+
+    const GENESIS_GATEWAY_ERROR_MESSAGE_DEFAULT = 'An error has occurred while processing your request to the gateway';
+
+    const PPRO_TRANSACTION_SUFFIX = '_ppro';
+
+    const GOOGLE_PAY_TRANSACTION_PREFIX     = GenesisTransactionTypes::GOOGLE_PAY . '_';
+    const GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE = GooglePaymentTypes::AUTHORIZE;
+    const GOOGLE_PAY_PAYMENT_TYPE_SALE      = GooglePaymentTypes::SALE;
+
+    const PAYPAL_TRANSACTION_PREFIX         = GenesisTransactionTypes::PAY_PAL . '_';
+    const PAYPAL_PAYMENT_TYPE_AUTHORIZE     = PayPalPaymentTypes::AUTHORIZE;
+    const PAYPAL_PAYMENT_TYPE_SALE          = PayPalPaymentTypes::SALE;
+    const PAYPAL_PAYMENT_TYPE_EXPRESS       = PayPalPaymentTypes::EXPRESS;
+    
+    const APPLE_PAY_TRANSACTION_PREFIX      = GenesisTransactionTypes::APPLE_PAY . '_';
+    const APPLE_PAY_PAYMENT_TYPE_AUTHORIZE  = ApplePaymentTypes::AUTHORIZE;
+    const APPLE_PAY_PAYMENT_TYPE_SALE       = ApplePaymentTypes::SALE;
+
+    const PLATFORM_TRANSACTION_SUFFIX = '_mage2';
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -61,6 +93,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\Framework\Locale\ResolverInterface
      */
     protected $_localeResolver;
+
     /**
      * @var \Magento\Customer\Model\Session
      */
@@ -71,7 +104,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \EComProcessing\Genesis\Model\ConfigFactory $configFactory
+     * @param \EComprocessing\Genesis\Model\ConfigFactory $configFactory
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Customer\Model\Session $customerSession
      */
@@ -80,7 +113,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \EComProcessing\Genesis\Model\ConfigFactory $configFactory,
+        \EComprocessing\Genesis\Model\ConfigFactory $configFactory,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Customer\Model\Session $customerSession
     ) {
@@ -99,11 +132,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Creates an Instance of the Helper
      * @param  \Magento\Framework\ObjectManagerInterface $objectManager
-     * @return \EComProcessing\Genesis\Helper\Data
+     * @return \EComprocessing\Genesis\Helper\Data
      */
     public static function getInstance($objectManager)
     {
-        return $objectManager->create(get_class());
+        return $objectManager->create(
+            get_class()
+        );
     }
 
     /**
@@ -126,7 +161,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Get an Instance of the Config Factory Class
-     * @return \EComProcessing\Genesis\Model\ConfigFactory
+     * @return \EComprocessing\Genesis\Model\ConfigFactory
      */
     protected function getConfigFactory()
     {
@@ -170,6 +205,32 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Retrieves the consumer's user id
+     *
+     * @return int
+     */
+    public function getCurrentUserId()
+    {
+        if ($this->getCustomerSession()->isLoggedIn()) {
+            return $this->getCustomerSession()->getId();
+        }
+        return 0;
+    }
+
+    /**
+     * @param int $length
+     * @return string
+     */
+    public function getCurrentUserIdHash($length = 30)
+    {
+        $userId = $this->getCurrentUserId();
+
+        $userHash = $userId > 0 ? sha1($userId) : $this->genTransactionId(null, $length);
+
+        return substr($userHash, 0, $length);
+    }
+
+    /**
      * Build URL for store
      *
      * @param string $moduleCode
@@ -183,12 +244,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         list($route, $module) = explode('_', $moduleCode);
 
-        $path = sprintf("%s/%s/%s", $route, $module, $controller);
+        $path = sprintf('%s/%s/%s', $route, $module, $controller);
 
         $store = $this->getStoreManager()->getStore($storeId);
         $params = [
-            "_store" => $store,
-            "_secure" =>
+            '_store' => $store,
+            '_secure' =>
                 ($secure === null
                     ? $this->isStoreSecure($storeId)
                     : $secure
@@ -196,9 +257,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         if (isset($queryParams) && is_array($queryParams)) {
-            foreach ($queryParams as $queryKey => $queryValue) {
-                $params[$queryKey] = $queryValue;
-            }
+            $params = array_merge(
+                $params,
+                $queryParams
+            );
         }
 
         return $this->getUrlBuilder()->getUrl(
@@ -209,18 +271,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Construct Module Notification Url
-     * @param string $moduleCode
      * @param bool|null $secure
      * @param int|null $storeId
      * @return string
-     * @SuppressWarning(PHPMD.UnusedLocalVariable)
      */
-    public function getNotificationUrl($moduleCode, $secure = null, $storeId = null)
+    public function getNotificationUrl($secure = null, $storeId = null)
     {
         $store = $this->getStoreManager()->getStore($storeId);
         $params = [
-            "_store" => $store,
-            "_secure" =>
+            '_store' => $store,
+            '_secure' =>
                 ($secure === null
                     ? $this->isStoreSecure($storeId)
                     : $secure
@@ -228,7 +288,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         return $this->getUrlBuilder()->getUrl(
-            "ecomprocessing/ipn",
+            'ecomprocessing/ipn',
             $params
         );
     }
@@ -243,9 +303,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->getUrl(
             $moduleCode,
-            "redirect",
+            'redirect',
             [
-                "action" => $returnAction
+                'action' => $returnAction
             ]
         );
     }
@@ -259,7 +319,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return substr(sha1(
             uniqid(
-                microtime() . mt_rand(),
+                microtime() . random_int(1, PHP_INT_MAX),
                 true
             )
         ), 0, $length);
@@ -281,7 +341,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             '%s_%s',
             (string)$orderId,
             $this->uniqHash($length)
-        ), 0, $length);
+        ), 0, $length) . self::PLATFORM_TRANSACTION_SUFFIX;
     }
 
     /**
@@ -342,6 +402,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get Transaction Status Value
+     * @param \Magento\Sales\Model\Order\Payment\Transaction $transaction
+     * @return null|string
+     */
+    public function getTransactionStatus($transaction)
+    {
+        return $this->getTransactionAdditionalInfoValue(
+            $transaction,
+            self::ADDITIONAL_INFO_KEY_STATUS
+        );
+    }
+
+    /**
      * Get Transaction Type
      * @param \Magento\Sales\Model\Order\Payment\Transaction $transaction
      * @return null|string
@@ -377,6 +450,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         if (!empty($transactionTerminalToken)) {
             \Genesis\Config::setToken($transactionTerminalToken);
+
             return true;
         }
 
@@ -398,7 +472,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**Get an Instance of a Method Object using the Method Code
      * @param string $methodCode
-     * @return \EComProcessing\Genesis\Model\Config
+     * @return \EComprocessing\Genesis\Model\Config
      */
     public function getMethodConfig($methodCode)
     {
@@ -421,14 +495,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Hides generated Exception and raises WebApiException in order to
      * display the message to user
-     * @param \Exception $e
+     * @param \Exception $exception
      * @throws \Magento\Framework\Webapi\Exception
      */
-    public function maskException(\Exception $e)
+    public function maskException(\Exception $exception)
     {
         $this->throwWebApiException(
-            $e->getMessage(),
-            $e->getCode()
+            $exception->getMessage(),
+            $exception->getCode()
         );
     }
 
@@ -445,6 +519,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     ) {
         if (is_string($phrase)) {
             $phrase = new \Magento\Framework\Phrase($phrase);
+        }
+
+        /** Only HTTP error codes are allowed. No success or redirect codes must be used. */
+        if ($httpCode < 400 || $httpCode > 599) {
+            $httpCode = \Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR;
         }
 
         return new \Magento\Framework\Webapi\Exception(
@@ -500,7 +579,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getArrayFromGatewayResponse($response)
     {
-        $transaction_details = array();
+        $transaction_details = [];
         foreach ($response as $key => $value) {
             if (is_string($value)) {
                 $transaction_details[$key] = $value;
@@ -627,18 +706,61 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             case \Genesis\API\Constants\Transaction\States::ERROR:
             case \Genesis\API\Constants\Transaction\States::DECLINED:
-                foreach ($order->getInvoiceCollection() as $invoice) {
-                    $invoice->cancel();
+                $this->buildInvoiceCancelation($order);
+                $this->setOrderStatusByState(
+                    $order,
+                    \Magento\Sales\Model\Order::STATE_CLOSED
+                );
+                $order->save();
+                break;
+            case \Genesis\API\Constants\Transaction\States::VOIDED:
+            case \Genesis\API\Constants\Transaction\States::TIMEOUT:
+                $this->buildInvoiceCancelation($order);
+                $this->setOrderStatusByState(
+                    $order,
+                    \Magento\Sales\Model\Order::STATE_CANCELED
+                );
+                $order->save();
+                break;
+            case \Genesis\API\Constants\Transaction\States::REFUNDED:
+                if ($order->canCreditmemo()) {
+                    /** @var CreditmemoFactory $creditMemoFactory */
+                    $creditMemoFactory = $this->getObjectManager()
+                        ->create('Magento\Sales\Model\Order\CreditmemoFactory');
+                    /** @var CreditmemoService $creditmemoService */
+                    $creditmemoService = $this->getObjectManager()
+                        ->create('Magento\Sales\Model\Service\CreditmemoService');
+
+                    $creditMemo = $creditMemoFactory->createByOrder($order);
+                    $creditmemoService->refund($creditMemo);
                 }
-                $order
-                    ->registerCancellation($message)
-                    ->setCustomerNoteNotify(true)
-                    ->save();
+
+                $order->save();
                 break;
             default:
                 $order->save();
                 break;
         }
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     * @param bool $customerNotify
+     * @param string $message
+     *
+     * @return \Magento\Sales\Model\Order
+     */
+    public function buildInvoiceCancelation($order, $customerNotify = true, $message = '')
+    {
+        /** @var \Magento\Sales\Model\Order\Invoice $invoice */
+        foreach ($order->getInvoiceCollection() as $invoice) {
+            $invoice->cancel();
+        }
+        $order
+            ->registerCancellation($message)
+            ->setCustomerNoteNotify($customerNotify);
+
+        return $order;
     }
 
     /**
@@ -649,7 +771,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function buildOrderDescriptionText($order, $lineSeparator = PHP_EOL)
     {
-        $orderDescriptionText = "";
+        $orderDescriptionText = '';
 
         $orderItems = $order->getItems();
 
@@ -672,7 +794,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function buildOrderUsage()
     {
-        return __("Magento 2 Transaction");
+        return sprintf('%s %s', __('Payment via'), $this->getStoreName());
+    }
+
+    /**
+     * Get Store frontend name
+     * @return string
+     */
+    public function getStoreName()
+    {
+        return $this->getStoreManager()->getStore()->getFrontendName();
     }
 
     /**
@@ -767,7 +898,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
 
         return array_map(
-            'trim',
+            function ($item) {
+                return trim($item);
+            },
             explode(
                 ',',
                 $allowedCurrencyCodes
@@ -848,27 +981,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function canRefundTransaction($transaction)
     {
-        $refundableTransactions = [
-            GenesisTransactionTypes::CAPTURE,
-            GenesisTransactionTypes::SALE,
-            GenesisTransactionTypes::SALE_3D,
-            GenesisTransactionTypes::INIT_RECURRING_SALE,
-            GenesisTransactionTypes::INIT_RECURRING_SALE_3D,
-            GenesisTransactionTypes::RECURRING_SALE,
-            GenesisTransactionTypes::CASHU,
-            GenesisTransactionTypes::PPRO,
-            GenesisTransactionTypes::ABNIDEAL,
-            GenesisTransactionTypes::TRUSTLY_SALE,
-            GenesisTransactionTypes::P24,
-            GenesisTransactionTypes::INPAY,
-            GenesisTransactionTypes::PAYPAL_EXPRESS
-        ];
-
         $transactionType = $this->getTransactionTypeByTransaction(
             $transaction
         );
 
-        return (!empty($transactionType) && in_array($transactionType, $refundableTransactions));
+        return (!empty($transactionType) && GenesisTransactionTypes::canRefund($transactionType));
     }
 
     /**
@@ -876,6 +993,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string $methodCode
      * @param string $currencyCode
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function isCurrencyAllowed($methodCode, $currencyCode)
     {
@@ -911,13 +1030,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string $transactionType
      * @return bool
      */
-    public function getIsTransaction3dSecure($transactionType)
+    public function getIsTransactionThreeDSecure($transactionType)
     {
-        return
-            $this->getStringEndsWith(
-                strtoupper($transactionType),
-                self::SECURE_TRANSACTION_TYPE_SUFFIX
-            );
+        return GenesisTransactionTypes::is3D($transactionType);
     }
 
     /**
@@ -931,7 +1046,42 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return
             (isset($response->message) && isset($response->technical_message))
                 ? "{$response->message} {$response->technical_message}"
-                : 'An error has occurred while processing your request to the gateway';
+                : self::GENESIS_GATEWAY_ERROR_MESSAGE_DEFAULT;
+    }
+
+    /**
+     * @param \Genesis\API\Response $genesisApiResponse
+     * @return \stdClass
+     */
+    public function getGatewayResponseObject($genesisApiResponse)
+    {
+        return $genesisApiResponse->getResponseObject();
+    }
+
+    /**
+     * Executes a request to the Genesis Payment Gateway
+     *
+     * @param \Genesis\Genesis $genesis
+     * @return \Genesis\Genesis
+     */
+    public function executeGatewayRequest(\Genesis\Genesis $genesis)
+    {
+        $genesis->execute();
+
+        return $genesis;
+    }
+
+    /**
+     * Creates Notification Object
+     *
+     * @param array $data - Incoming notification ($_POST)
+     * @return \Genesis\API\Notification
+     */
+    public function createNotificationObject($data)
+    {
+        $notification = new \Genesis\API\Notification($data);
+
+        return $notification;
     }
 
     /**
@@ -940,12 +1090,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getShouldCreateAuthNotification($transactionType)
     {
-        $authorizeTransactions = [
-            GenesisTransactionTypes::AUTHORIZE,
-            GenesisTransactionTypes::AUTHORIZE_3D
-        ];
+        if ($this->isTransactionWithCustomAttribute($transactionType)) {
+            return $this->isSelectedAuthorizePaymentType($transactionType);
+        }
 
-        return in_array($transactionType, $authorizeTransactions);
+        return GenesisTransactionTypes::isAuthorize($transactionType);
     }
 
     /**
@@ -954,57 +1103,233 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getShouldCreateCaptureNotification($transactionType)
     {
-        $captureNotificationTransactions = [
-            GenesisTransactionTypes::ABNIDEAL,
-            GenesisTransactionTypes::ALIPAY,
-            GenesisTransactionTypes::CITADEL_PAYIN,
-            GenesisTransactionTypes::CASHU,
-            GenesisTransactionTypes::EZEEWALLET,
-            GenesisTransactionTypes::IDEBIT_PAYIN,
-            GenesisTransactionTypes::INPAY,
-            GenesisTransactionTypes::INSTA_DEBIT_PAYIN,
-            GenesisTransactionTypes::TRUSTLY_SALE,
-            GenesisTransactionTypes::NETELLER,
-            GenesisTransactionTypes::P24,
-            GenesisTransactionTypes::PAYBYVOUCHER_SALE,
-            GenesisTransactionTypes::PAYBYVOUCHER_YEEPAY,
-            GenesisTransactionTypes::PAYPAL_EXPRESS,
-            GenesisTransactionTypes::PAYSAFECARD,
-            GenesisTransactionTypes::PAYSEC_PAYIN,
-            GenesisTransactionTypes::PPRO,
-            GenesisTransactionTypes::SALE,
-            GenesisTransactionTypes::SALE_3D,
-            GenesisTransactionTypes::SOFORT,
-            GenesisTransactionTypes::SDD_SALE,
-            GenesisTransactionTypes::WECHAT
+        if ($this->isTransactionWithCustomAttribute($transactionType)) {
+            return !$this->isSelectedAuthorizePaymentType($transactionType);
+        }
+
+        return !GenesisTransactionTypes::isAuthorize($transactionType);
+    }
+
+    /**
+     * @param Order $order
+     * @return \Genesis\API\Request\Financial\Alternatives\Klarna\Items
+     * @throws \Genesis\Exceptions\ErrorParameter
+     */
+    public function getKlarnaCustomParamItems($order)
+    {
+        $items     = new \Genesis\API\Request\Financial\Alternatives\Klarna\Items($order->getOrderCurrencyCode());
+        $itemsList = $this->getItemListArray($order);
+        foreach ($itemsList as $item) {
+            $klarnaItem = new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                $item['name'],
+                $item['type'],
+                $item['qty'],
+                $item['price']
+            );
+            $items->addItem($klarnaItem);
+        }
+
+        $taxes = floatval($order->getTaxAmount());
+        if ($taxes) {
+            $items->addItem(
+                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                    'Taxes',
+                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_SURCHARGE,
+                    1,
+                    $taxes
+                )
+            );
+        }
+
+        $discount = floatval($order->getDiscountAmount());
+        if ($discount) {
+            $items->addItem(
+                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                    'Discount',
+                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_DISCOUNT,
+                    1,
+                    -$discount
+                )
+            );
+        }
+
+        $shipping_cost = floatval($order->getShippingAmount());
+        if ($shipping_cost) {
+            $items->addItem(
+                new \Genesis\API\Request\Financial\Alternatives\Klarna\Item(
+                    'Shipping Costs',
+                    \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_SHIPPING_FEE,
+                    1,
+                    $shipping_cost
+                )
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param $order
+     * @return array
+     */
+    public function getItemListArray($order)
+    {
+        $productResult = [];
+
+        foreach ($order->getAllItems() as $item) {
+            /** @var $item Mage_Sales_Model_Quote_Item */
+            $product = $item->getProduct();
+
+            $type = $item->getIsVirtual() ?
+                \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_DIGITAL :
+                \Genesis\API\Request\Financial\Alternatives\Klarna\Item::ITEM_TYPE_PHYSICAL;
+
+            $productResult[] = [
+                'sku'  =>
+                    $product->getSku(),
+                'name' =>
+                    $product->getName(),
+                'qty'  =>
+                    $item->getData('qty_ordered'),
+                'price' =>
+                    $item->getPrice(),
+                'type' =>
+                    $type
+            ];
+        }
+
+        return $productResult;
+    }
+
+    /**
+     * Extract the payment transaction object from Genesis Response
+     *
+     * @param \stdClass $responseObject
+     * @param int $payment_id
+     *
+     * @return \stdClass
+     */
+    public function populatePaymentTransaction($responseObject, $payment_id)
+    {
+        if (isset($responseObject->payment_transaction->unique_id)) {
+            return $responseObject->payment_transaction;
+        }
+
+        if (count($responseObject->payment_transaction) > 1) {
+            $paymentTransactions = $responseObject->payment_transaction;
+            $lastTransaction     = $this->getLastPaymentTransaction(
+                $payment_id
+            );
+
+            if (!isset($lastTransaction)) {
+                return $paymentTransactions[0];
+            }
+
+            foreach ($paymentTransactions as $paymentTransaction) {
+                if ($paymentTransaction->unique_id == $lastTransaction->getParentTxnId()) {
+                    return $paymentTransaction;
+                }
+            }
+
+            return $paymentTransactions[0];
+        }
+    }
+
+    /**
+     * Find last Payment TransactionFind Payment Transaction per Field Value
+     *
+     * @param string $fieldValue
+     * @param string $fieldName
+     *
+     * @return null|\Magento\Sales\Model\Order\Payment\Transaction
+     */
+    public function getLastPaymentTransaction($fieldValue, $fieldName = 'payment_id')
+    {
+        if (!isset($fieldValue) || empty($fieldValue)) {
+            return null;
+        }
+
+        $transactionBuilder = $this->getObjectManager()->create(
+            "\\Magento\\Sales\\Model\\Order\\Payment\\Transaction\\Repository"
+        );
+
+        $searchBuilder = $this->getObjectManager()->create("\\Magento\\Framework\\Api\\SearchCriteriaBuilder");
+        $filterBuilder = $this->getObjectManager()->create("\\Magento\\Framework\\Api\\FilterBuilder");
+        $sortBuilder   = $this->getObjectManager()->create("\\Magento\\Framework\\Api\\SortOrder");
+
+        $filters[] = $filterBuilder
+            ->setField($fieldName)
+            ->setValue($fieldValue)
+            ->create();
+
+        $orderCriteria = $sortBuilder
+            ->setField("transaction_id")
+            ->setDirection("DESC");
+
+        $searchCriteria = $searchBuilder
+            ->addFilters($filters)
+            ->setPageSize(1)
+            ->setSortOrders([$orderCriteria])
+            ->create();
+
+        /** @var \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\Collection $transactionList */
+        $transactionList = $transactionBuilder->getList($searchCriteria);
+
+        if ($transactionList->getSize()) {
+            /** @var \Magento\Sales\Model\Order\Payment\Transaction $trx */
+            $transaction = $transactionList->getLastItem();
+            return $transaction;
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if special validation should be applied
+     *
+     * @param $transactionType
+     * @return bool
+     */
+    public function isTransactionWithCustomAttribute($transactionType)
+    {
+        $transactionTypes = [
+            GenesisTransactionTypes::GOOGLE_PAY,
+            GenesisTransactionTypes::PAY_PAL,
+            GenesisTransactionTypes::APPLE_PAY
         ];
 
-        return in_array($transactionType, $captureNotificationTransactions);
+        return in_array($transactionType, $transactionTypes);
     }
 
     /**
-     * Retrieves the consumer's user id
+     * Check if we should create Authorize Notification to the Magento store
      *
-     * @return int
+     * @param $transactionType
+     * @return bool
      */
-    public function getCurrentUserId()
+    public function isSelectedAuthorizePaymentType($transactionType)
     {
-        if ($this->getCustomerSession()->isLoggedIn()) {
-            return $this->getCustomerSession()->getId();
+        switch ($transactionType) {
+            case GenesisTransactionTypes::GOOGLE_PAY:
+                return in_array(
+                    self::GOOGLE_PAY_TRANSACTION_PREFIX . self::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE,
+                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                        ->getTransactionTypes()
+                );
+            case GenesisTransactionTypes::PAY_PAL:
+                return in_array(
+                    self::PAYPAL_TRANSACTION_PREFIX . self::PAYPAL_PAYMENT_TYPE_AUTHORIZE,
+                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                        ->getTransactionTypes()
+                );
+            case GenesisTransactionTypes::APPLE_PAY:
+                return in_array(
+                    self::APPLE_PAY_TRANSACTION_PREFIX . self::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE,
+                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                        ->getTransactionTypes()
+                );
+            default:
+                return false;
         }
-        return 0;
-    }
-
-    /**
-     * @param int $length
-     * @return string
-     */
-    public function getCurrentUserIdHash($length = 30)
-    {
-        $userId = $this->getCurrentUserId();
-
-        $userHash = $userId > 0 ? sha1($userId) : $this->genTransactionId(null, $length);
-
-        return substr($userHash, 0, $length);
     }
 }

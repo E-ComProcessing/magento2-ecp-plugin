@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (C) 2016 E-Comprocessing
+Copyright (C) 2018 E-Comprocessing Ltd.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -13,13 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 @author      E-Comprocessing
-@copyright   2016 E-Comprocessing Ltd.
+@copyright   2018 E-Comprocessing Ltd.
 @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
 -->
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="ecomprocessing_checkout" translate="label comment" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="1">
         <label>E-Comprocessing Checkout</label>
-        <frontend_model>EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset\CheckoutPayment</frontend_model>
+        <frontend_model>EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\CheckoutPayment</frontend_model>
         <comment><![CDATA[Checkout payment method - receive credit-card payments, without the need of PCI-DSS certificate or HTTPS. Note: Upon checkout, the customer will be redirected to a secure payment form, located on our servers and we will notify you, once the payment reached a final status]]></comment>
         <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Enabled</label>
@@ -67,18 +67,23 @@ GNU General Public License for more details.
             <comment><![CDATA[Select the transaction types that must be attempted during the customer's Checkout session.]]></comment>
             <tooltip><![CDATA[The first transaction type that is available will be selected by the gateway.]]></tooltip>
             <config_path>payment/ecomprocessing_checkout/transaction_types</config_path>
-            <source_model>EComProcessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType</source_model>
+            <source_model>EComprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType</source_model>
             <validate>required-entry</validate>
             <depends>
                 <field id="active">1</field>
             </depends>
             <can_be_empty>0</can_be_empty>
         </field>
-        <field id="order_status" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="tokenization" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Enable Tokenization</label>
+            <config_path>payment/ecomprocessing_checkout/tokenization</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="order_status" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>New Order Status</label>
             <comment><![CDATA[Select the default order status for new orders.]]></comment>
             <config_path>payment/ecomprocessing_checkout/order_status</config_path>
-            <source_model>EComProcessing\Genesis\Model\Config\Source\Order\Status\NewStatus</source_model>
+            <source_model>EComprocessing\Genesis\Model\Config\Source\Order\Status\NewStatus</source_model>
             <validate>required-entry</validate>
             <can_be_empty>0</can_be_empty>
             <depends>
@@ -108,7 +113,7 @@ GNU General Public License for more details.
             <label>Allow Specific Currencies</label>
             <comment><![CDATA[Define if you wish to enable the method for some of the global allowed currencies.]]></comment>
             <config_path>payment/ecomprocessing_checkout/allow_specific_currency</config_path>
-            <source_model>EComProcessing\Genesis\Model\Config\Source\Locale\Currency\AllSpecificCurrencies</source_model>
+            <source_model>EComprocessing\Genesis\Model\Config\Source\Locale\Currency\AllSpecificCurrencies</source_model>
             <depends>
                 <field id="active">1</field>
             </depends>
@@ -118,7 +123,7 @@ GNU General Public License for more details.
             <comment><![CDATA[Select the currencies, for which you would like to enable payment method.]]></comment>
             <tooltip><![CDATA[Hint: You should have in mind that, you'd better allow only the currencies, which can be processed from your configured Merchant-Terminals.]]></tooltip>
             <config_path>payment/ecomprocessing_checkout/specific_currencies</config_path>
-            <source_model>EComProcessing\Genesis\Model\Config\Source\Locale\Currency\Currency</source_model>
+            <source_model>EComprocessing\Genesis\Model\Config\Source\Locale\Currency\Currency</source_model>
             <validate>required-entry</validate>
             <depends>
                 <field id="active">1</field>
@@ -150,6 +155,15 @@ GNU General Public License for more details.
             <frontend_class>validate-number</frontend_class>
             <validate>validate-zero-or-greater</validate>
             <can_be_empty>1</can_be_empty>
+            <depends>
+                <field id="active">1</field>
+            </depends>
+        </field>
+        <field id="payment_confirmation_email_enabled" translate="label" type="select" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Enable e-mail notifications</label>
+            <comment><![CDATA[If checked, the New Order e-mails are received upon successful payment.<br>Notes: Make sure to enable New Order e-mails from Store > Configuration > Sales > Sales Emails > Order > Enabled]]></comment>
+            <config_path>payment/ecomprocessing_checkout/payment_confirmation_email_enabled</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <depends>
                 <field id="active">1</field>
             </depends>

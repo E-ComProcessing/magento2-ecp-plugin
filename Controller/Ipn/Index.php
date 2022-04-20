@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,18 +13,18 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Controller\Ipn;
+namespace EComprocessing\Genesis\Controller\Ipn;
 
 /**
- * Unified IPN controller for all supported E-Comprocessing Payment Methods
+ * Unified IPN controller for all supported EComprocessing Payment Methods
  * Class Index
- * @package EComProcessing\Genesis\Controller\Ipn
+ * @package EComprocessing\Genesis\Controller\Ipn
  */
-class Index extends \EComProcessing\Genesis\Controller\AbstractAction
+class Index extends \EComprocessing\Genesis\Controller\AbstractAction
 {
     /**
      * Get the name of the IPN Class, used to handle the posted Notification
@@ -67,23 +67,26 @@ class Index extends \EComProcessing\Genesis\Controller\AbstractAction
             $ipnClassName = $this->getIpnClassName();
 
             if (!isset($ipnClassName)) {
-                $this->getResponse()->setHttpResponseCode(403);
-            } else {
-                $ipn = $this->getObjectManager()->create(
-                    "EComProcessing\\Genesis\\Model\\Ipn\\{$ipnClassName}",
-                    ['data' => $postValues]
-                );
+                $this->getResponse()->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_FORBIDDEN);
 
-                $responseBody = $ipn->handleGenesisNotification();
-                $this->getResponse()
+                return;
+            }
+
+            $ipn = $this->getObjectManager()->create(
+                "EComprocessing\\Genesis\\Model\\Ipn\\{$ipnClassName}",
+                ['data' => $postValues]
+            );
+
+            $responseBody = $ipn->handleGenesisNotification();
+            $this
+                ->getResponse()
                     ->setHeader('Content-type', 'application/xml')
                     ->setBody($responseBody)
-                    ->setHttpResponseCode(200)
+                    ->setHttpResponseCode(\Magento\Framework\Webapi\Response::HTTP_OK)
                     ->sendResponse();
-            }
         } catch (\Exception $e) {
             $this->getLogger()->critical($e);
-            $this->getResponse()->setHttpResponseCode(500);
+            $this->getResponse()->setHttpResponseCode(\Magento\Framework\Webapi\Exception::HTTP_INTERNAL_ERROR);
         }
     }
 }

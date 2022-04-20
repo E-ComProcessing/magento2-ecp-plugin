@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,16 +13,16 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model;
+namespace EComprocessing\Genesis\Model;
 
 /**
  * Config Factory Class
  * Class ConfigFactory
- * @package EComProcessing\Genesis\Model
+ * @package EComprocessing\Genesis\Model
  */
 class ConfigFactory
 {
@@ -47,7 +47,7 @@ class ConfigFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = '\\EComProcessing\\Genesis\\Model\\Config'
+        $instanceName = '\\EComprocessing\\Genesis\\Model\\Config'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
@@ -57,9 +57,9 @@ class ConfigFactory
      * Create class instance with specified parameters
      *
      * @param array $data
-     * @return \EComProcessing\Genesis\Model\Config
+     * @return \EComprocessing\Genesis\Model\Config
      */
-    public function create(array $data = array())
+    public function create(array $data = [])
     {
         return $this->_objectManager->create($this->_instanceName, $data);
     }

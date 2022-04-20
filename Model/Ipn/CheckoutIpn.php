@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,25 +13,25 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Model\Ipn;
+namespace EComprocessing\Genesis\Model\Ipn;
 
 /**
  * Checkout Method IPN Handler Class
  * Class CheckoutIpn
- * @package EComProcessing\Genesis\Model\Ipn
+ * @package EComprocessing\Genesis\Model\Ipn
  */
-class CheckoutIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
+class CheckoutIpn extends \EComprocessing\Genesis\Model\Ipn\AbstractIpn
 {
     /**
      * @return string
      */
     protected function getPaymentMethodCode()
     {
-        return \EComProcessing\Genesis\Model\Method\Checkout::CODE;
+        return \EComprocessing\Genesis\Model\Method\Checkout::CODE;
     }
 
     /**
@@ -41,7 +41,8 @@ class CheckoutIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
      */
     protected function processNotification($responseObject)
     {
-        $payment = $this->getPayment();
+        $recordedToCommentHistory = false;
+        $payment                  = $this->getPayment();
 
         $this->getModuleHelper()->updateTransactionAdditionalInfo(
             $responseObject->unique_id,
@@ -50,7 +51,16 @@ class CheckoutIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
         );
 
         if (isset($responseObject->payment_transaction)) {
-            $payment_transaction = $responseObject->payment_transaction;
+            $addToCommentHistory = $recordedToCommentHistory = true;
+            $payment_transaction = $this->getModuleHelper()->populatePaymentTransaction(
+                $responseObject,
+                $payment->getEntityId()
+            );
+
+            $this->createIpnComment(
+                $this->getTransactionMessage($payment_transaction),
+                $addToCommentHistory
+            );
 
             $payment
                 ->setLastTransId(
@@ -76,9 +86,7 @@ class CheckoutIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
                     )
                 )
                 ->setPreparedMessage(
-                    $this->createIpnComment(
-                        $payment_transaction->message
-                    )
+                    __('Module') . ' ' . $this->getConfigHelper()->getCheckoutTitle()
                 )
                 ->resetTransactionAdditionalInfo(
 
@@ -89,12 +97,21 @@ class CheckoutIpn extends \EComProcessing\Genesis\Model\Ipn\AbstractIpn
                 $payment_transaction
             );
 
-            $this->registerPaymentNotification(
-                $payment,
-                $payment_transaction
-            );
+            if (\Genesis\API\Constants\Transaction\States::APPROVED == $payment_transaction->status) {
+                $this->registerPaymentNotification(
+                    $payment,
+                    $payment_transaction
+                );
+            }
 
             $payment->save();
+        }
+
+        if (!$recordedToCommentHistory) {
+            $this->createIpnComment(
+                $this->getTransactionMessage($responseObject),
+                true
+            );
         }
 
         $this->getModuleHelper()->setOrderState(

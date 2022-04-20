@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2016 E-Comprocessing
+ * Copyright (C) 2018 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,17 +13,17 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2016 E-Comprocessing Ltd.
+ * @copyright   2018 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base;
+namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base;
 
 /**
- * Base Renderer for E-Comprocessing Checkout & Direct Panel in System Configuration
+ * Base Renderer for EComprocessing Checkout & Direct Panel in System Configuration
  *
  * Class Payment
- * @package EComProcessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base
+ * @package EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base
  */
 abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
@@ -76,7 +76,8 @@ abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
      */
     protected function _getHeaderTitleHtml($element)
     {
-        $html = "<div class=\"config-heading {$this->getBlockHeadCssClass()}\" ><div class=\"headingEComProcessing\"><strong>" . $element->getLegend();
+        $html = "<div class=\"config-heading {$this->getBlockHeadCssClass()}\" >
+                    <div class=\"headingEComprocessing\"><strong>" . $element->getLegend();
 
         $html .= '</strong>';
 
@@ -129,8 +130,10 @@ abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @return string
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
+    // @codingStandardsIgnoreStart
     protected function _getExtraJs($element)
     {
         $script = "require(['jquery', 'prototype'], function(jQuery){
@@ -141,4 +144,5 @@ abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
 
         return $this->_jsHelper->getScript($script);
     }
+    // @codingStandardsIgnoreEnd
 }
