@@ -17,16 +17,16 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Controller\Checkout;
+namespace Ecomprocessing\Genesis\Test\Unit\Controller\Checkout;
 
-use EComprocessing\Genesis\Controller\Checkout\Redirect as RedirectController;
+use Ecomprocessing\Genesis\Controller\Checkout\Redirect as RedirectController;
 
 /**
  * Class RedirectTest
- * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect
- * @package EComprocessing\Genesis\Test\Unit\Controller\Checkout
+ * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect
+ * @package Ecomprocessing\Genesis\Test\Unit\Controller\Checkout
  */
-class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
+class RedirectTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
 {
     /**
      * Gets controller's fully qualified class name
@@ -38,14 +38,14 @@ class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\Abstract
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect::execute()
      */
     public function testExecuteFailWhenLastRealOrderIdIsNull()
     {
         $this->httpRequestMock->expects(self::once())
             ->method('getParam')
             ->with('action')
-            ->willReturn(\EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS);
+            ->willReturn(\Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS);
 
         $this->checkoutSessionMock->expects(self::atLeastOnce())
             ->method('getLastRealOrderId')
@@ -61,14 +61,14 @@ class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\Abstract
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect::execute()
      */
     public function testExecuteSuccessReturnAction()
     {
         $this->httpRequestMock->expects(self::once())
             ->method('getParam')
             ->with('action')
-            ->willReturn(\EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS);
+            ->willReturn(\Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS);
 
         $this->checkoutSessionMock->expects(self::atLeastOnce())
             ->method('getLastRealOrderId')
@@ -81,22 +81,22 @@ class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\Abstract
             ->method('redirect')
             ->with(
                 $this->getControllerInstance()->getResponse(),
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH,
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH,
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS
             );
 
         $this->getControllerInstance()->execute();
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect::execute()
      */
     public function testExecuteCancelReturnAction()
     {
         $this->httpRequestMock->expects(self::once())
             ->method('getParam')
             ->with('action')
-            ->willReturn(\EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL);
+            ->willReturn(\Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL);
 
         $this->checkoutSessionMock->expects(self::never())
             ->method('getLastRealOrderId');
@@ -108,22 +108,22 @@ class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\Abstract
             ->method('redirect')
             ->with(
                 $this->getControllerInstance()->getResponse(),
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_PATH,
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_ARGS
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_PATH,
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_ARGS
             );
 
         $this->getControllerInstance()->execute();
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect::execute()
      */
     public function testExecuteFailureReturnAction()
     {
         $this->httpRequestMock->expects(self::once())
             ->method('getParam')
             ->with('action')
-            ->willReturn(\EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE);
+            ->willReturn(\Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE);
 
         $this->checkoutSessionMock->expects(self::never())
             ->method('getLastRealOrderId');
@@ -135,15 +135,15 @@ class RedirectTest extends \EComprocessing\Genesis\Test\Unit\Controller\Abstract
             ->method('redirect')
             ->with(
                 $this->getControllerInstance()->getResponse(),
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_PATH,
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_ARGS
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_PATH,
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_CART_ARGS
             );
 
         $this->getControllerInstance()->execute();
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Checkout\Redirect::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Redirect::execute()
      */
     public function testExecuteUnsupportedReturnAction()
     {

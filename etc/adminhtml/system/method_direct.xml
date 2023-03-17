@@ -19,7 +19,7 @@ GNU General Public License for more details.
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="ecomprocessing_direct" translate="label comment" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="2">
         <label>E-Comprocessing Direct</label>
-        <frontend_model>EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\DirectPayment</frontend_model>
+        <frontend_model>Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\DirectPayment</frontend_model>
         <comment><![CDATA[Direct payment method - allow customers to enter their CreditCard information on your website. Note: You need PCI-DSS certificate in order to enable this payment method.]]></comment>
         <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Enabled</label>
@@ -76,7 +76,7 @@ GNU General Public License for more details.
             <label>Transaction Types</label>
             <comment><![CDATA[Select the transaction type for the initial transaction.]]></comment>
             <config_path>payment/ecomprocessing_direct/transaction_type</config_path>
-            <source_model>EComprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType</source_model>
+            <source_model>Ecomprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType</source_model>
             <validate>required-entry</validate>
             <depends>
                 <field id="active">1</field>
@@ -87,7 +87,7 @@ GNU General Public License for more details.
             <label>New Order Status</label>
             <comment><![CDATA[Select the default order status for new orders.]]></comment>
             <config_path>payment/ecomprocessing_direct/order_status</config_path>
-            <source_model>EComprocessing\Genesis\Model\Config\Source\Order\Status\NewStatus</source_model>
+            <source_model>Ecomprocessing\Genesis\Model\Config\Source\Order\Status\NewStatus</source_model>
             <validate>required-entry</validate>
             <can_be_empty>0</can_be_empty>
             <depends>
@@ -117,7 +117,7 @@ GNU General Public License for more details.
             <label>Allow Specific Currencies</label>
             <comment><![CDATA[Define if you wish to enable the method for some of the global allowed currencies.]]></comment>
             <config_path>payment/ecomprocessing_direct/allow_specific_currency</config_path>
-            <source_model>EComprocessing\Genesis\Model\Config\Source\Locale\Currency\AllSpecificCurrencies</source_model>
+            <source_model>Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency\AllSpecificCurrencies</source_model>
             <depends>
                 <field id="active">1</field>
             </depends>
@@ -127,7 +127,7 @@ GNU General Public License for more details.
             <comment><![CDATA[Select the currencies, for which you would like to enable payment method.]]></comment>
             <tooltip><![CDATA[Hint: You should have in mind that, you'd better allow only the currencies, which can be processed from your configured Merchant-Terminals.]]></tooltip>
             <config_path>payment/ecomprocessing_direct/specific_currencies</config_path>
-            <source_model>EComprocessing\Genesis\Model\Config\Source\Locale\Currency\Currency</source_model>
+            <source_model>Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency\Currency</source_model>
             <validate>required-entry</validate>
             <depends>
                 <field id="active">1</field>

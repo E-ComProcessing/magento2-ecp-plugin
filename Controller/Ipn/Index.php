@@ -17,14 +17,14 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller\Ipn;
+namespace Ecomprocessing\Genesis\Controller\Ipn;
 
 /**
- * Unified IPN controller for all supported EComprocessing Payment Methods
+ * Unified IPN controller for all supported Ecomprocessing Payment Methods
  * Class Index
- * @package EComprocessing\Genesis\Controller\Ipn
+ * @package Ecomprocessing\Genesis\Controller\Ipn
  */
-class Index extends \EComprocessing\Genesis\Controller\AbstractAction
+class Index extends \Ecomprocessing\Genesis\Controller\AbstractAction
 {
     /**
      * Get the name of the IPN Class, used to handle the posted Notification
@@ -73,7 +73,7 @@ class Index extends \EComprocessing\Genesis\Controller\AbstractAction
             }
 
             $ipn = $this->getObjectManager()->create(
-                "EComprocessing\\Genesis\\Model\\Ipn\\{$ipnClassName}",
+                "Ecomprocessing\\Genesis\\Model\\Ipn\\{$ipnClassName}",
                 ['data' => $postValues]
             );
 

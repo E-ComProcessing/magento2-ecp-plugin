@@ -17,24 +17,24 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Direct;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Direct;
 
 use \Genesis\API\Constants\Transaction\Types as TransactionTypes;
 
 /**
  * Class TransactionTypeTest
  *
- * @covers \EComprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType
- * @package EComprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Direct
+ * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Direct
  */
 class TransactionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @covers \EComprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType::toOptionArray()
+     * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType::toOptionArray()
      */
     public function testToOptionArray()
     {
-        $sourceModel = new \EComprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType();
+        $sourceModel = new \Ecomprocessing\Genesis\Model\Config\Source\Method\Direct\TransactionType();
 
         $this->assertEquals(
             [

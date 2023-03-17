@@ -17,14 +17,14 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Ipn;
+namespace Ecomprocessing\Genesis\Model\Ipn;
 
 /**
  * Direct Method IPN Handler Class
  * Class DirectIpn
- * @package EComprocessing\Genesis\Model\Ipn
+ * @package Ecomprocessing\Genesis\Model\Ipn
  */
-class DirectIpn extends \EComprocessing\Genesis\Model\Ipn\AbstractIpn
+class DirectIpn extends \Ecomprocessing\Genesis\Model\Ipn\AbstractIpn
 {
     /**
      * Gets payment method code
@@ -32,7 +32,7 @@ class DirectIpn extends \EComprocessing\Genesis\Model\Ipn\AbstractIpn
      */
     protected function getPaymentMethodCode()
     {
-        return \EComprocessing\Genesis\Model\Method\Direct::CODE;
+        return \Ecomprocessing\Genesis\Model\Method\Direct::CODE;
     }
 
     /**

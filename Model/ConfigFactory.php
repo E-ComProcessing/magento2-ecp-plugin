@@ -17,12 +17,12 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model;
+namespace Ecomprocessing\Genesis\Model;
 
 /**
  * Config Factory Class
  * Class ConfigFactory
- * @package EComprocessing\Genesis\Model
+ * @package Ecomprocessing\Genesis\Model
  */
 class ConfigFactory
 {
@@ -47,7 +47,7 @@ class ConfigFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = '\\EComprocessing\\Genesis\\Model\\Config'
+        $instanceName = '\\Ecomprocessing\\Genesis\\Model\\Config'
     ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
@@ -57,7 +57,7 @@ class ConfigFactory
      * Create class instance with specified parameters
      *
      * @param array $data
-     * @return \EComprocessing\Genesis\Model\Config
+     * @return \Ecomprocessing\Genesis\Model\Config
      */
     public function create(array $data = [])
     {

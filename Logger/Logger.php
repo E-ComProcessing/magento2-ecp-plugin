@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Logger;
+namespace Ecomprocessing\Genesis\Logger;
 
 /**
  * Class Logger
@@ -25,7 +25,7 @@ namespace EComprocessing\Genesis\Logger;
  * By default the logger writes to
  * ./var/log/ecomprocessing/default.log
  *
- * @package EComprocessing\Genesis\Logger
+ * @package Ecomprocessing\Genesis\Logger
  */
 class Logger extends \Magento\Payment\Model\Method\Logger
 {

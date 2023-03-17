@@ -17,20 +17,20 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Ipn;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Ipn;
 
-use EComprocessing\Genesis\Model\Ipn\DirectIpn;
-use EComprocessing\Genesis\Helper\Data as DataHelper;
+use Ecomprocessing\Genesis\Model\Ipn\DirectIpn;
+use Ecomprocessing\Genesis\Helper\Data as DataHelper;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 
 /**
  * Class CheckoutIpnRefundedTest
- * @covers \EComprocessing\Genesis\Model\Ipn\DirectIpn
- * @package EComprocessing\Genesis\Test\Unit\Model\Ipn
+ * @covers \Ecomprocessing\Genesis\Model\Ipn\DirectIpn
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Ipn
  */
 
-class DirectIpnSaleRefundTest extends \EComprocessing\Genesis\Test\Unit\Model\Ipn\DirectIpnTest
+class DirectIpnSaleRefundTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Ipn\DirectIpnTest
 {
     const RECONCILIATION_TRANSACTION_TYPE   = \Genesis\API\Constants\Transaction\Types::SALE;
 

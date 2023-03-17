@@ -17,10 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Method;
+namespace Ecomprocessing\Genesis\Model\Method;
 
-use EComprocessing\Genesis\Model\Traits\OnlinePaymentMethod;
-use EComprocessing\Genesis\Model\Traits\PaymentMethodBehaviour;
+use Ecomprocessing\Genesis\Model\Traits\OnlinePaymentMethod;
+use Ecomprocessing\Genesis\Model\Traits\PaymentMethodBehaviour;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Payment\Model\InfoInterface;
@@ -31,7 +31,7 @@ use Magento\Quote\Api\Data\PaymentMethodInterface;
 
 /**
  * Class Base
- * @package EComprocessing\Genesis\Model\Method
+ * @package Ecomprocessing\Genesis\Model\Method
  */
 abstract class Base extends AbstractModel implements MethodInterface, PaymentMethodInterface
 {
@@ -54,7 +54,7 @@ abstract class Base extends AbstractModel implements MethodInterface, PaymentMet
     protected $_scopeConfig;
 
     /**
-     * @var \EComprocessing\Genesis\Logger\Logger
+     * @var \Ecomprocessing\Genesis\Logger\Logger
      */
     protected $_loggerHelper;
 
@@ -64,7 +64,7 @@ abstract class Base extends AbstractModel implements MethodInterface, PaymentMet
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \EComprocessing\Genesis\Logger\Logger $loggerHelper
+     * @param \Ecomprocessing\Genesis\Logger\Logger $loggerHelper
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
@@ -73,7 +73,7 @@ abstract class Base extends AbstractModel implements MethodInterface, PaymentMet
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \EComprocessing\Genesis\Logger\Logger $loggerHelper,
+        \Ecomprocessing\Genesis\Logger\Logger $loggerHelper,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []

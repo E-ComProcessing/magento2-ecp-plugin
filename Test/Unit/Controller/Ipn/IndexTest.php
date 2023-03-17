@@ -17,27 +17,27 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Controller\Ipn;
+namespace Ecomprocessing\Genesis\Test\Unit\Controller\Ipn;
 
-use EComprocessing\Genesis\Controller\Ipn\Index as IndexController;
+use Ecomprocessing\Genesis\Controller\Ipn\Index as IndexController;
 
-use EComprocessing\Genesis\Model\Ipn\CheckoutIpn;
-use EComprocessing\Genesis\Model\Ipn\DirectIpn;
+use Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn;
+use Ecomprocessing\Genesis\Model\Ipn\DirectIpn;
 
 /**
  * Class IndexTest
- * @covers \EComprocessing\Genesis\Controller\Ipn\Index
- * @package EComprocessing\Genesis\Test\Unit\Controller\Ipn
+ * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index
+ * @package Ecomprocessing\Genesis\Test\Unit\Controller\Ipn
  */
-class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
+class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Ipn\CheckoutIpn|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $checkoutIpnMock;
 
     /**
-     * @var \EComprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $directIpnMock;
 
@@ -52,7 +52,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
 
     /**
      * Get mock for Checkout IPN
-     * @return \EComprocessing\Genesis\Model\Ipn\CheckoutIpn|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCheckoutIpnMock()
     {
@@ -64,7 +64,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
 
     /**
      * Get mock for Direct IPN
-     * @return \EComprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getDirectIpnMock()
     {
@@ -86,7 +86,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Ipn\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index::execute()
      */
     public function testExecuteHttpRequestIsNotPost()
     {
@@ -98,7 +98,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Ipn\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index::execute()
      */
     public function testExecutePostWithoutId()
     {
@@ -121,7 +121,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Ipn\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index::execute()
      */
     public function testExecutePostWithWpfUniqueId()
     {
@@ -143,7 +143,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
         $this->objectManagerMock->expects(self::once())
             ->method('create')
             ->with(
-                'EComprocessing\Genesis\Model\Ipn\CheckoutIpn',
+                'Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn',
                 [
                     'data' => $postParams
                 ]
@@ -176,7 +176,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Ipn\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index::execute()
      */
     public function testExecutePostWithUniqueId()
     {
@@ -198,7 +198,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
         $this->objectManagerMock->expects(self::once())
             ->method('create')
             ->with(
-                'EComprocessing\Genesis\Model\Ipn\DirectIpn',
+                'Ecomprocessing\Genesis\Model\Ipn\DirectIpn',
                 [
                     'data' => $postParams
                 ]

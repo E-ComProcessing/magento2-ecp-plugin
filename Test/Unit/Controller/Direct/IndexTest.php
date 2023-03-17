@@ -17,16 +17,16 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Controller\Direct;
+namespace Ecomprocessing\Genesis\Test\Unit\Controller\Direct;
 
-use EComprocessing\Genesis\Controller\Direct\Index as IndexController;
+use Ecomprocessing\Genesis\Controller\Direct\Index as IndexController;
 
 /**
  * Class IndexTest
- * @covers \EComprocessing\Genesis\Controller\Direct\Index
- * @package EComprocessing\Genesis\Test\Unit\Controller\Direct
+ * @covers \Ecomprocessing\Genesis\Controller\Direct\Index
+ * @package Ecomprocessing\Genesis\Test\Unit\Controller\Direct
  */
-class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
+class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
 {
     /**
      * Gets controller's fully qualified class name
@@ -38,7 +38,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Direct\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Direct\Index::execute()
      */
     public function testExecuteFailWhenLastRealOrderIdIsNull()
     {
@@ -50,7 +50,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
             ->method('getId');
 
         $this->checkoutSessionMock->expects(self::never())
-            ->method('getEComprocessingCheckoutRedirectUrl');
+            ->method('getEcomprocessingCheckoutRedirectUrl');
 
         $this->responseInterfaceMock->expects(self::never())
             ->method('setRedirect');
@@ -62,7 +62,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Direct\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Direct\Index::execute()
      */
     public function testExecuteFailWhenRedirectUrlIsNull()
     {
@@ -75,7 +75,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
             ->willReturn(1);
 
         $this->checkoutSessionMock->expects(self::once())
-            ->method('getEComprocessingCheckoutRedirectUrl')
+            ->method('getEcomprocessingCheckoutRedirectUrl')
             ->willReturn(null);
 
         $this->responseInterfaceMock->expects(self::never())
@@ -85,15 +85,15 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
             ->method('redirect')
             ->with(
                 $this->getControllerInstance()->getResponse(),
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH,
-                \EComprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH,
+                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS
             );
 
         $this->getControllerInstance()->execute();
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Controller\Direct\Index::execute()
+     * @covers \Ecomprocessing\Genesis\Controller\Direct\Index::execute()
      */
     public function testExecuteSuccessfulRedirectToTheRedirectUrl()
     {
@@ -108,7 +108,7 @@ class IndexTest extends \EComprocessing\Genesis\Test\Unit\Controller\AbstractCon
             ->willReturn(1);
 
         $this->checkoutSessionMock->expects(self::once())
-            ->method('getEComprocessingCheckoutRedirectUrl')
+            ->method('getEcomprocessingCheckoutRedirectUrl')
             ->willReturn($redirectUrl);
 
         $this->responseInterfaceMock->expects(self::once())

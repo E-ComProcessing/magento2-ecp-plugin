@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Setup\Patch\Data;
+namespace Ecomprocessing\Genesis\Setup\Patch\Data;
 
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Setup\EavSetupFactory;

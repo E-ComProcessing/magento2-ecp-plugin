@@ -17,15 +17,15 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller\Checkout;
+namespace Ecomprocessing\Genesis\Controller\Checkout;
 
 /**
  * Return Action Controller (used to handle Redirects from the Payment Gateway)
  *
  * Class Redirect
- * @package EComprocessing\Genesis\Controller\Checkout
+ * @package Ecomprocessing\Genesis\Controller\Checkout
  */
-class Redirect extends \EComprocessing\Genesis\Controller\AbstractCheckoutRedirectAction
+class Redirect extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutRedirectAction
 {
     /**
      * Handle the result from the Payment Gateway
@@ -35,18 +35,18 @@ class Redirect extends \EComprocessing\Genesis\Controller\AbstractCheckoutRedire
     public function execute()
     {
         switch ($this->getReturnAction()) {
-            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS:
+            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS:
                 $this->executeSuccessAction();
                 break;
 
-            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL:
+            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL:
                 $this->getMessageManager()->addWarning(
                     __("You have successfully canceled your order")
                 );
                 $this->executeCancelAction();
                 break;
 
-            case \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE:
+            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE:
                 $this->getMessageManager()->addError(
                     __("Please, check your input and try again!")
                 );

@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Ipn;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Ipn;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Sales\Model\Order\Status\History;
@@ -25,20 +25,20 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use Psr\Log\LoggerInterface as Logger;
-use EComprocessing\Genesis\Helper\Data as DataHelper;
+use Ecomprocessing\Genesis\Helper\Data as DataHelper;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Sales\Model\Order;
 use Genesis\API\Notification as Notification;
 
 /**
  * Class AbstractIpnTest
- * @package EComprocessing\Genesis\Test\Unit\Model\Ipn
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Ipn
  */
 
-abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
+abstract class AbstractIpnTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Ipn\CheckoutIpn|\EComprocessing\Genesis\Model\Ipn\DirectIpn
+     * @var \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\Ecomprocessing\Genesis\Model\Ipn\DirectIpn
      */
     protected $ipnInstance;
 
@@ -83,7 +83,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
     protected $loggerMock;
 
     /**
-     * @var \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $dataHelperMock;
 
@@ -93,7 +93,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
     protected $notificationMock;
 
     /**
-     * @var \EComprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configHelperMock;
 
@@ -111,7 +111,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
 
     /**
      * Get mock for data helper
-     * @return \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function getDataHelperMock();
 
@@ -123,7 +123,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
 
     /**
      * Gets IPN model instance
-     * @return \EComprocessing\Genesis\Model\Ipn\CheckoutIpn|\EComprocessing\Genesis\Model\Ipn\DirectIpn
+     * @return \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\Ecomprocessing\Genesis\Model\Ipn\DirectIpn
      */
     protected function getIpnInstance()
     {
@@ -324,7 +324,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
     }
 
     /**
-     * mock function replacing EComprocessing\Genesis\Model\Config::initGatewayClient
+     * mock function replacing Ecomprocessing\Genesis\Model\Config::initGatewayClient
      */
     protected function initGatewayClientMock()
     {
@@ -370,11 +370,11 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
 
     /**
      * Get mock for model config
-     * @return \EComprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getConfigHelperMock()
     {
-        $this->configHelperMock = $this->getMockBuilder('EComprocessing\Genesis\Model\Config')
+        $this->configHelperMock = $this->getMockBuilder('Ecomprocessing\Genesis\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['initGatewayClient', 'initReconciliation', 'getCheckoutTitle'])
             ->getMock();
@@ -413,7 +413,7 @@ abstract class AbstractIpnTest extends \EComprocessing\Genesis\Test\Unit\Abstrac
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Model\Ipn\AbstractIpn::handleGenesisNotification()
+     * @covers \Ecomprocessing\Genesis\Model\Ipn\AbstractIpn::handleGenesisNotification()
      */
     public function testGenesisNotification()
     {

@@ -25,12 +25,12 @@ install:
 script:
   composer create-project --repository-url=https://70b6e72e6e33d12c4260ad54dbc7fec0:7ba15f6725fd0f426f1d52661583a9ca@repo.magento.com/ magento/project-community-edition magento-root
 
-  mkdir -p magento-root/app/code/EComprocessing/Genesis
+  mkdir -p magento-root/app/code/Ecomprocessing/Genesis
 
-  cp -r !(magento-root) magento-root/app/code/EComprocessing/Genesis/
+  cp -r !(magento-root) magento-root/app/code/Ecomprocessing/Genesis/
 
   cd magento-root
 
   composer require genesisgateway/genesis_php:1.9.* fzaninotto/faker:1.*
 
-  php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/EComprocessing/Genesis/
+  php vendor/phpunit/phpunit/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/Ecomprocessing/Genesis/

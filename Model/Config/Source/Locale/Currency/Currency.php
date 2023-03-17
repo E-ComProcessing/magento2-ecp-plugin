@@ -17,27 +17,27 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Config\Source\Locale\Currency;
+namespace Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency;
 
 /**
  * Locale currency source
  * Class Currency
- * @package EComprocessing\Genesis\Model\Config\Source\Locale\Currency
+ * @package Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency
  */
 class Currency extends \Magento\Config\Model\Config\Source\Locale\Currency
 {
     /**
-     * @var \EComprocessing\Genesis\Helper\Data
+     * @var \Ecomprocessing\Genesis\Helper\Data
      */
     protected $_moduleHelper;
 
     /**
      * @param \Magento\Framework\Locale\ListsInterface $localeLists
-     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
      */
     public function __construct(
         \Magento\Framework\Locale\ListsInterface $localeLists,
-        \EComprocessing\Genesis\Helper\Data $moduleHelper
+        \Ecomprocessing\Genesis\Helper\Data $moduleHelper
     ) {
         parent::__construct($localeLists);
         $this->_moduleHelper = $moduleHelper;
@@ -45,7 +45,7 @@ class Currency extends \Magento\Config\Model\Config\Source\Locale\Currency
 
     /**
      * Get an Instance of the Module Helper
-     * @return \EComprocessing\Genesis\Helper\Data
+     * @return \Ecomprocessing\Genesis\Helper\Data
      */
     protected function getModuleHelper()
     {

@@ -17,9 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Method;
+namespace Ecomprocessing\Genesis\Model\Method;
 
-use EComprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\BankCode;
 use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes;
 use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes;
 use Genesis\API\Constants\Transaction\States;
@@ -32,7 +33,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 /**
  * Checkout Payment Method Model Class
  * Class Checkout
- * @package EComprocessing\Genesis\Model\Method
+ * @package Ecomprocessing\Genesis\Model\Method
  */
 class Checkout extends Base
 {
@@ -51,10 +52,10 @@ class Checkout extends Base
      * @param \Magento\Framework\App\Action\Context $actionContext
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \EComprocessing\Genesis\Logger\Logger $loggerHelper
+     * @param \Ecomprocessing\Genesis\Logger\Logger $loggerHelper
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
      * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
@@ -67,10 +68,10 @@ class Checkout extends Base
         \Magento\Framework\App\Action\Context $actionContext,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \EComprocessing\Genesis\Logger\Logger  $loggerHelper,
+        \Ecomprocessing\Genesis\Logger\Logger  $loggerHelper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \EComprocessing\Genesis\Helper\Data $moduleHelper,
+        \Ecomprocessing\Genesis\Helper\Data $moduleHelper,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
@@ -252,6 +253,14 @@ class Checkout extends Base
                         'user_id' => $trustlyUserId
                     ];
                     break;
+                case GenesisTransactionTypes::ONLINE_BANKING_PAYIN:
+                    $parameters['bank_codes'] = array_map(
+                        function ($value) {
+                            return ['bank_code' => $value];
+                        },
+                        $this->getConfigHelper()->getBankCodes()
+                    );
+                    break;
             }
 
             if (!isset($parameters)) {
@@ -262,6 +271,7 @@ class Checkout extends Base
                 $transactionType,
                 $parameters
             );
+            unset($parameters);
         }
     }
 
@@ -561,17 +571,17 @@ class Checkout extends Base
                 'return_success' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
                     ),
                 'return_cancel'  =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
+                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
                     ),
                 'return_failure' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
                     ),
             ]
         ];
@@ -591,7 +601,7 @@ class Checkout extends Base
                     $responseObject
                 );
 
-                $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
+                $this->getCheckoutSession()->setEcomprocessingLastCheckoutError(
                     $errorMessage
                 );
 
@@ -625,7 +635,7 @@ class Checkout extends Base
                 $e->getMessage()
             );
 
-            $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
+            $this->getCheckoutSession()->setEcomprocessingLastCheckoutError(
                 $e->getMessage()
             );
 

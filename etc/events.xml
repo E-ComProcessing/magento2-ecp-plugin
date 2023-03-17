@@ -18,9 +18,9 @@ GNU General Public License for more details.
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="controller_front_send_response_before">
-        <observer name="ecomprocessing_checkout_controller_front_send_response_before" instance="EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore"/>
+        <observer name="ecomprocessing_checkout_controller_front_send_response_before" instance="Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore"/>
     </event>
     <event name="sales_order_save_before">
-        <observer name="payment_sales_order_save_before" instance="EComprocessing\Genesis\Model\Observer\SalesOrderBeforeSaveObserver" />
+        <observer name="payment_sales_order_save_before" instance="Ecomprocessing\Genesis\Model\Observer\SalesOrderBeforeSaveObserver" />
     </event>
 </config>

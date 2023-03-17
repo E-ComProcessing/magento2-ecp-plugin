@@ -21,7 +21,7 @@ GNU General Public License for more details.
         <payment>
             <ecomprocessing_direct>
                 <active>0</active>
-                <model>EComprocessing\Genesis\Model\Method\Direct</model>
+                <model>Ecomprocessing\Genesis\Model\Method\Direct</model>
                 <order_status>payment_review</order_status>
                 <title>E-Comprocessing Direct</title>
                 <test_mode>1</test_mode>
@@ -33,7 +33,7 @@ GNU General Public License for more details.
             </ecomprocessing_direct>
             <ecomprocessing_checkout>
                 <active>0</active>
-                <model>EComprocessing\Genesis\Model\Method\Checkout</model>
+                <model>Ecomprocessing\Genesis\Model\Method\Checkout</model>
                 <order_status>payment_review</order_status>
                 <title>E-Comprocessing Checkout</title>
                 <test_mode>1</test_mode>

@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Helper;
+namespace Ecomprocessing\Genesis\Helper;
 
 use Genesis\API\Constants\Transaction\Types;
 use Magento\Sales\Model\Order;
@@ -26,7 +26,7 @@ use Magento\Sales\Model\Order;
  * Checkout workflow helper
  *
  * Class Checkout
- * @package EComprocessing\Genesis\Helper
+ * @package Ecomprocessing\Genesis\Helper
  */
 class Checkout
 {

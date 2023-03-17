@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Traits;
+namespace Ecomprocessing\Genesis\Model\Traits;
 
 use Magento\Payment\Model\InfoInterface;
 
@@ -26,7 +26,7 @@ use Magento\Payment\Model\InfoInterface;
  *
  * Describes the capabilities of the payment methods
  *
- * @package EComprocessing\Genesis\Model\Traits
+ * @package Ecomprocessing\Genesis\Model\Traits
  */
 trait PaymentMethodBehaviour
 {

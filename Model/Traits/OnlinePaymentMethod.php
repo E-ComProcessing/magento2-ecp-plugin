@@ -17,23 +17,23 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Traits;
+namespace Ecomprocessing\Genesis\Model\Traits;
 
 use Genesis\API\Constants\Transaction\Types;
 
 /**
  * Trait for defining common variables and methods for all Payment Solutions
  * Trait OnlinePaymentMethod
- * @package EComprocessing\Genesis\Model\Traits
+ * @package Ecomprocessing\Genesis\Model\Traits
  */
 trait OnlinePaymentMethod
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Config
+     * @var \Ecomprocessing\Genesis\Model\Config
      */
     protected $_configHelper;
     /**
-     * @var \EComprocessing\Genesis\Helper\Data
+     * @var \Ecomprocessing\Genesis\Helper\Data
      */
     protected $_moduleHelper;
     /**
@@ -59,7 +59,7 @@ trait OnlinePaymentMethod
 
     /**
      * Get an Instance of the Config Helper Object
-     * @return \EComprocessing\Genesis\Model\Config
+     * @return \Ecomprocessing\Genesis\Model\Config
      */
     public function getConfigHelper()
     {
@@ -68,7 +68,7 @@ trait OnlinePaymentMethod
 
     /**
      * Get an Instance of the Module Helper Object
-     * @return \EComprocessing\Genesis\Helper\Data
+     * @return \Ecomprocessing\Genesis\Helper\Data
      */
     public function getModuleHelper()
     {
@@ -571,7 +571,7 @@ trait OnlinePaymentMethod
             );
         }
 
-        $this->getCheckoutSession()->setEComprocessingCheckoutRedirectUrl($redirectUrl);
+        $this->getCheckoutSession()->setEcomprocessingCheckoutRedirectUrl($redirectUrl);
     }
 
     /**
@@ -579,6 +579,6 @@ trait OnlinePaymentMethod
      */
     public function unsetRedirectUrl()
     {
-        $this->getCheckoutSession()->setEComprocessingCheckoutRedirectUrl(null);
+        $this->getCheckoutSession()->setEcomprocessingCheckoutRedirectUrl(null);
     }
 }

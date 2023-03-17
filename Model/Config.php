@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model;
+namespace Ecomprocessing\Genesis\Model;
 
 use Magento\Store\Model\ScopeInterface;
 
@@ -191,7 +191,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
         return !empty($this->getUserName()) &&
                !empty($this->getPassword()) &&
                !empty($this->getTransactionTypes()) &&
-               ($methodCode != \EComprocessing\Genesis\Model\Method\Direct::CODE || !empty($this->getToken()));
+               ($methodCode != \Ecomprocessing\Genesis\Model\Method\Direct::CODE || !empty($this->getToken()));
     }
 
     /**
@@ -359,5 +359,21 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
         $methodCode = $methodCode?: $this->_methodCode;
 
         return $this->isFlagChecked($methodCode, 'payment_confirmation_email_enabled');
+    }
+
+    /**
+     * Get selected Bank codes
+     * @return array
+     */
+    public function getBankCodes()
+    {
+        return
+            array_map(
+                'trim',
+                explode(
+                    ',',
+                    $this->getValue('bank_codes')
+                )
+            );
     }
 }

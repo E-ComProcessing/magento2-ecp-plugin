@@ -20,14 +20,14 @@ GNU General Public License for more details.
     <system>
         <section id="payment">
             <group id="ecomprocessing_genesis_init" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
-                <frontend_model>EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Init</frontend_model>
+                <frontend_model>Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Init</frontend_model>
             </group>
             <group id="ecomprocessing_genesis" translate="label comment" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>ecomprocessing</label>
                 <fieldset_css>complex</fieldset_css>
                 <comment>Accept payments through E-Comprocessing's Payment Gateway - Genesis</comment>
-                <include path="EComprocessing_Genesis::system/method_checkout.xml"/>
-                <include path="EComprocessing_Genesis::system/method_direct.xml"/>
+                <include path="Ecomprocessing_Genesis::system/method_checkout.xml"/>
+                <include path="Ecomprocessing_Genesis::system/method_direct.xml"/>
             </group>
         </section>
     </system>

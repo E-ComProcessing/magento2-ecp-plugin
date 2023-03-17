@@ -17,19 +17,19 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Method;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Method;
 
 use Magento\Sales\Model\Order;
-use EComprocessing\Genesis\Helper\Data as EComprocessingDataHelper;
+use Ecomprocessing\Genesis\Helper\Data as EcomprocessingDataHelper;
 use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 
 /**
  * Base Test Method Class for Payment Method Models
  *
  * Class AbstractMethodTest
- * @package EComprocessing\Genesis\Test\Unit\Model\Method
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Method
  */
-abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
+abstract class AbstractMethodTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     const ORDER_AMOUNT = 1.05;
 
@@ -40,7 +40,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     const API_TOKEN    = 'api_token-c7dd1174bab427d2333b66b12a8ed703';
 
     /**
-     * @var \EComprocessing\Genesis\Model\Method\Checkout|\EComprocessing\Genesis\Model\Method\Direct
+     * @var \Ecomprocessing\Genesis\Model\Method\Checkout|\Ecomprocessing\Genesis\Model\Method\Direct
      */
     protected $paymentMethodInstance;
 
@@ -64,12 +64,12 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     protected $paymentMock;
 
     /**
-     * @var \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $dataHelperMock;
 
     /**
-     * @var \EComprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Config|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configHelperMock;
 
@@ -79,7 +79,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     protected $checkoutSessionMock;
 
     /**
-     * @var \EComprocessing\Genesis\Logger\Logger|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Logger\Logger|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $loggerHelperMock;
 
@@ -89,7 +89,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     protected $psrLoggerMock;
 
     /**
-     * @return \EComprocessing\Genesis\Model\Method\Checkout|\EComprocessing\Genesis\Model\Method\Direct
+     * @return \Ecomprocessing\Genesis\Model\Method\Checkout|\Ecomprocessing\Genesis\Model\Method\Direct
      */
     protected function getPaymentMethodInstance()
     {
@@ -153,7 +153,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             ])
             ->getMock();
 
-        $this->dataHelperMock = $this->getMockBuilder(\EComprocessing\Genesis\Helper\Data::class)
+        $this->dataHelperMock = $this->getMockBuilder(\Ecomprocessing\Genesis\Helper\Data::class)
             ->disableOriginalConstructor()
             ->setMethods(
                 [
@@ -174,7 +174,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             )
             ->getMock();
 
-        $this->configHelperMock = $this->getMockBuilder('EComprocessing\Genesis\Model\Config')
+        $this->configHelperMock = $this->getMockBuilder('Ecomprocessing\Genesis\Model\Config')
             ->disableOriginalConstructor()
             ->setMethods(['getMethodCode', 'initGatewayClient', 'getScopeConfig'])
             ->getMock();
@@ -188,10 +188,10 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             ->setMethods(
                 [
                     'getQuote',
-                    'setEComprocessingLastCheckoutError',
-                    'setEComprocessingCheckoutRedirectUrl',
-                    'getEComprocessingLastCheckoutError',
-                    'getEComprocessingCheckoutRedirectUrl'
+                    'setEcomprocessingLastCheckoutError',
+                    'setEcomprocessingCheckoutRedirectUrl',
+                    'getEcomprocessingLastCheckoutError',
+                    'getEcomprocessingCheckoutRedirectUrl'
                 ]
             )
             ->getMock();
@@ -258,7 +258,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     protected function setupLoggerMocks()
     {
         $this->loggerHelperMock = $this->getMockBuilder(
-            \EComprocessing\Genesis\Logger\Logger::class
+            \Ecomprocessing\Genesis\Logger\Logger::class
         )->getMock();
 
         $this->psrLoggerMock = $this->getMockBuilder(
@@ -361,7 +361,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Model\Method\Direct::getConfigData()
+     * @covers \Ecomprocessing\Genesis\Model\Method\Direct::getConfigData()
      */
     public function testGetConfigValue()
     {
@@ -403,7 +403,7 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             )
             ->willReturn(
                 [
-                    \EComprocessing\Genesis\Helper\Data::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN => self::API_TOKEN
+                    \Ecomprocessing\Genesis\Helper\Data::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN => self::API_TOKEN
                 ]
             );
 
@@ -483,8 +483,8 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE => GenesisTransactionTypes::SALE,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   => self::API_TOKEN
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE => GenesisTransactionTypes::SALE,
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   => self::API_TOKEN
                 ]
             );
 
@@ -571,9 +571,9 @@ abstract class AbstractMethodTest extends \EComprocessing\Genesis\Test\Unit\Abst
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         GenesisTransactionTypes::AUTHORIZE_3D,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   =>
                         self::API_TOKEN
                 ]
             );

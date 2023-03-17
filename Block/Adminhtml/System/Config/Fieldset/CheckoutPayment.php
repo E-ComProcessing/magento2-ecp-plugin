@@ -17,15 +17,15 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
+namespace Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
 
 /**
- * Renderer for EComprocessing Checkout Panel in System Configuration
+ * Renderer for Ecomprocessing Checkout Panel in System Configuration
  *
  * Class CheckoutPayment
- * @package EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
+ * @package Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
  */
-class CheckoutPayment extends \EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
+class CheckoutPayment extends \Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
 {
     /**
      * Retrieves the Module Panel Css Class
@@ -33,6 +33,6 @@ class CheckoutPayment extends \EComprocessing\Genesis\Block\Adminhtml\System\Con
      */
     protected function getBlockHeadCssClass()
     {
-        return "EComprocessingCheckout";
+        return "EcomprocessingCheckout";
     }
 }

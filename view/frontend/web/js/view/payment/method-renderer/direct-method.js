@@ -40,7 +40,7 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'EComprocessing_Genesis/payment/method/direct/form'
+                template: 'Ecomprocessing_Genesis/payment/method/direct/form'
             },
 
             getCode: function () {

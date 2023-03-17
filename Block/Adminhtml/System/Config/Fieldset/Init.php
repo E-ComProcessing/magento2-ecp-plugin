@@ -17,10 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
+namespace Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
 
 /**
- * Renderer for EComprocessing banner in System Configuration
+ * Renderer for Ecomprocessing banner in System Configuration
  */
 class Init extends \Magento\Backend\Block\Template implements
     \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
@@ -28,7 +28,7 @@ class Init extends \Magento\Backend\Block\Template implements
     /**
      * @var string
      */
-    protected $_template = 'EComprocessing_Genesis::system/config/fieldset/init.phtml';
+    protected $_template = 'Ecomprocessing_Genesis::system/config/fieldset/init.phtml';
 
     /**
      * Render fieldset html

@@ -19,6 +19,6 @@
 
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'EComprocessing_Genesis',
+    'Ecomprocessing_Genesis',
     __DIR__
 );

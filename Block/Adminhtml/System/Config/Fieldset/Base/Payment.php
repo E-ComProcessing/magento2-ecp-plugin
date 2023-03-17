@@ -17,13 +17,13 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base;
+namespace Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base;
 
 /**
- * Base Renderer for EComprocessing Checkout & Direct Panel in System Configuration
+ * Base Renderer for Ecomprocessing Checkout & Direct Panel in System Configuration
  *
  * Class Payment
- * @package EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base
+ * @package Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base
  */
 abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
@@ -77,7 +77,7 @@ abstract class Payment extends \Magento\Config\Block\System\Config\Form\Fieldset
     protected function _getHeaderTitleHtml($element)
     {
         $html = "<div class=\"config-heading {$this->getBlockHeadCssClass()}\" >
-                    <div class=\"headingEComprocessing\"><strong>" . $element->getLegend();
+                    <div class=\"headingEcomprocessing\"><strong>" . $element->getLegend();
 
         $html .= '</strong>';
 

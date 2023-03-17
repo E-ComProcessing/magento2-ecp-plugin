@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Observer;
+namespace Ecomprocessing\Genesis\Model\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 
@@ -26,12 +26,12 @@ use Magento\Framework\Event\ObserverInterface;
  * Used to overwrite the Exception on the Checkout Page
  *
  * Class ControllerFrontSendResponseBefore
- * @package EComprocessing\Genesis\Model\Observer
+ * @package Ecomprocessing\Genesis\Model\Observer
  */
 class ControllerFrontSendResponseBefore implements ObserverInterface
 {
     /**
-     * @var \EComprocessing\Genesis\Helper\Data
+     * @var \Ecomprocessing\Genesis\Helper\Data
      */
     protected $_moduleHelper;
 
@@ -47,12 +47,12 @@ class ControllerFrontSendResponseBefore implements ObserverInterface
 
     /**
      * SalesOrderPaymentPlaceEnd constructor.
-     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
      * @param \Magento\Framework\Webapi\ErrorProcessor $errorProcessor
      * @param \Magento\Checkout\Model\Session $checkoutSession
      */
     public function __construct(
-        \EComprocessing\Genesis\Helper\Data $moduleHelper,
+        \Ecomprocessing\Genesis\Helper\Data $moduleHelper,
         \Magento\Framework\Webapi\ErrorProcessor $errorProcessor,
         \Magento\Checkout\Model\Session $checkoutSession
     ) {
@@ -73,12 +73,12 @@ class ControllerFrontSendResponseBefore implements ObserverInterface
                 /** @var \Magento\Framework\Webapi\Rest\Response $response */
 
                 $maskedException = $this->getModuleHelper()->createWebApiException(
-                    $this->getEComprocessingLastCheckoutError(),
+                    $this->getEcomprocessingLastCheckoutError(),
                     \Magento\Framework\Webapi\Exception::HTTP_BAD_REQUEST
                 );
 
                 $response->setException($maskedException);
-                $this->clearEComprocessingLastCheckoutError();
+                $this->clearEcomprocessingLastCheckoutError();
             }
         // @codingStandardsIgnoreStart
         } catch (\Exception $e) {
@@ -96,7 +96,7 @@ class ControllerFrontSendResponseBefore implements ObserverInterface
     protected function getShouldOverrideCheckoutException($response)
     {
         return
-            ($this->getEComprocessingLastCheckoutError()) &&
+            ($this->getEcomprocessingLastCheckoutError()) &&
             ($response instanceof \Magento\Framework\Webapi\Rest\Response) &&
             (method_exists($response, 'isException')) &&
             ($response->isException());
@@ -107,9 +107,9 @@ class ControllerFrontSendResponseBefore implements ObserverInterface
      *
      * @return mixed
      */
-    protected function getEComprocessingLastCheckoutError()
+    protected function getEcomprocessingLastCheckoutError()
     {
-        return $this->getCheckoutSession()->getEComprocessingLastCheckoutError();
+        return $this->getCheckoutSession()->getEcomprocessingLastCheckoutError();
     }
 
     /**
@@ -117,13 +117,13 @@ class ControllerFrontSendResponseBefore implements ObserverInterface
      *
      * @return void
      */
-    protected function clearEComprocessingLastCheckoutError()
+    protected function clearEcomprocessingLastCheckoutError()
     {
-        $this->getCheckoutSession()->setEComprocessingLastCheckoutError(null);
+        $this->getCheckoutSession()->setEcomprocessingLastCheckoutError(null);
     }
 
     /**
-     * @return \EComprocessing\Genesis\Helper\Data
+     * @return \Ecomprocessing\Genesis\Helper\Data
      */
     protected function getModuleHelper()
     {

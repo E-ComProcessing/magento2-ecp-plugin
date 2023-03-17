@@ -17,15 +17,15 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller\Checkout;
+namespace Ecomprocessing\Genesis\Controller\Checkout;
 
 /**
  * Front Controller for Checkout Method
  * it does a redirect to the WPF
  * Class Index
- * @package EComprocessing\Genesis\Controller\Checkout
+ * @package Ecomprocessing\Genesis\Controller\Checkout
  */
-class Index extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
+class Index extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction
 {
     /**
      * Redirect to Genesis WPF
@@ -38,7 +38,7 @@ class Index extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
         $order = $this->getOrder();
 
         if (isset($order)) {
-            $redirectUrl = $this->getCheckoutSession()->getEComprocessingCheckoutRedirectUrl();
+            $redirectUrl = $this->getCheckoutSession()->getEcomprocessingCheckoutRedirectUrl();
 
             if (isset($redirectUrl)) {
                 $this->getResponse()->setRedirect($redirectUrl);

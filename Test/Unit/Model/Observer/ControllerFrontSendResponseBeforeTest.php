@@ -17,19 +17,19 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Observer;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Observer;
 
-use EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore;
+use Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore;
 
 /**
  * Class ControllerFrontSendResponseBeforeTest
- * @covers \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore
- * @package EComprocessing\Genesis\Test\Unit\Model\Observer
+ * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Observer
  */
-class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test\Unit\Model\Observer\AbstractObserverTest
+class ControllerFrontSendResponseBeforeTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Observer\AbstractObserverTest
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $observerInstance;
 
@@ -42,7 +42,7 @@ class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
      */
     public function testExecuteNullResponse()
     {
@@ -61,7 +61,7 @@ class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
      */
     public function testExecuteDoNotOverrideCheckoutException()
     {
@@ -79,7 +79,7 @@ class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test
             ->willReturn($this->eventMock);
 
         $this->checkoutSessionMock->expects(self::atLeastOnce())
-            ->method('getEComprocessingLastCheckoutError')
+            ->method('getEcomprocessingLastCheckoutError')
             ->willReturn('Sample Error Message');
 
         $this->dataHelperMock->expects(self::never())
@@ -92,7 +92,7 @@ class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test
     }
 
     /**
-     * @covers \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
      */
     public function testExecuteOverrideCheckoutException()
     {
@@ -112,7 +112,7 @@ class ControllerFrontSendResponseBeforeTest extends \EComprocessing\Genesis\Test
             ->willReturn($this->eventMock);
 
         $this->checkoutSessionMock->expects(self::atLeastOnce())
-            ->method('getEComprocessingLastCheckoutError')
+            ->method('getEcomprocessingLastCheckoutError')
             ->willReturn($checkoutErrorMessage);
 
         $this->dataHelperMock->expects(self::once())

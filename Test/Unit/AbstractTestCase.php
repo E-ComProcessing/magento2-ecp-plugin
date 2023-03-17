@@ -17,13 +17,13 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit;
+namespace Ecomprocessing\Genesis\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 
 /**
  * Class AbstractTestCase
- * @package EComprocessing\Genesis\Test\Unit
+ * @package Ecomprocessing\Genesis\Test\Unit
  */
 abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
 {

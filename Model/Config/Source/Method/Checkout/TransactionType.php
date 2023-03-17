@@ -17,10 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Config\Source\Method\Checkout;
+namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
 
-use EComprocessing\Genesis\Helper\Checkout;
-use EComprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Helper\Checkout;
+use Ecomprocessing\Genesis\Helper\Data;
 use Genesis\API\Constants\Transaction\Names;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
@@ -31,7 +31,7 @@ use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
 /**
  * Checkout Transaction Types Model Source
  * Class TransactionType
- * @package EComprocessing\Genesis\Model\Config\Source\Method\Checkout
+ * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
 class TransactionType implements \Magento\Framework\Option\ArrayInterface
 {

@@ -17,9 +17,9 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Method;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Method;
 
-use EComprocessing\Genesis\Model\Method\Direct as DirectPaymentMethod;
+use Ecomprocessing\Genesis\Model\Method\Direct as DirectPaymentMethod;
 use Magento\Framework\DataObject as MagentoDataObject;
 use Magento\Quote\Api\Data\PaymentInterface as MagentoPaymentInterface;
 use Magento\Sales\Model\Order;
@@ -28,12 +28,12 @@ use Magento\Payment\Model\Method\AbstractMethod as AbstractPaymentMethod;
 
 /**
  * Class DirectTest
- * @covers \EComprocessing\Genesis\Model\Method\Direct
- * @package EComprocessing\Genesis\Test\Unit\Model\Method
+ * @covers \Ecomprocessing\Genesis\Model\Method\Direct
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Method
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\AbstractMethodTest
+class DirectTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\AbstractMethodTest
 {
     /**
      * @return string
@@ -328,7 +328,7 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
             ->withAnyParameters();
 
         $this->checkoutSessionMock->expects(self::never())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->withAnyParameters();
 
         $this->expectException(\Magento\Framework\Webapi\Exception::class);
@@ -442,11 +442,11 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
                 ->withConsecutive(
                     [
                         $this->getPaymentMethodInstance()->getCode(),
-                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
                     ],
                     [
                         $this->getPaymentMethodInstance()->getCode(),
-                        \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
                     ]
                 )
                 ->willReturnOnConsecutiveCalls(
@@ -513,7 +513,7 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
             ->willReturnSelf();
 
         $this->checkoutSessionMock->expects(self::once())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->with(
                 $isThreeDSecureTransaction
                     ? $gatewayResponse->redirect_url
@@ -595,7 +595,7 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
         $redirectUrl = static::SAMPLE_REDIRECT_URL;
 
         $this->checkoutSessionMock->expects(self::once())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->with($redirectUrl)
             ->willReturnSelf();
 
@@ -610,7 +610,7 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
         $redirectUrl = 'invalid-redirect/url';
 
         $this->checkoutSessionMock->expects(self::never())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->with($redirectUrl);
 
         $this->expectException(\Exception::class);
@@ -630,7 +630,7 @@ class DirectTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstract
     public function testUnsetRedirectUrl()
     {
         $this->checkoutSessionMock->expects(self::once())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->with(null);
 
         $this->getPaymentMethodInstance()->unsetRedirectUrl();

@@ -17,11 +17,11 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Plugin;
+namespace Ecomprocessing\Genesis\Plugin;
 
 /**
  * Class CsrfValidatorSkip
- * @package EComprocessing\Genesis\Plugin
+ * @package Ecomprocessing\Genesis\Plugin
  */
 class CsrfValidatorSkip
 {

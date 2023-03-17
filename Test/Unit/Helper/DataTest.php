@@ -17,22 +17,22 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Helper;
+namespace Ecomprocessing\Genesis\Test\Unit\Helper;
 
-use EComprocessing\Genesis\Helper\Data as EComprocessingDataHelper;
+use Ecomprocessing\Genesis\Helper\Data as EcomprocessingDataHelper;
 use Genesis\API\Constants\Transaction\States as GenesisTransactionStates;
 use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 
 /**
  * Class DataTest
- * @package EComprocessing\Genesis\Test\Unit\Helper
+ * @package Ecomprocessing\Genesis\Test\Unit\Helper
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
+class DataTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     /**
-     * @var EComprocessingDataHelper
+     * @var EcomprocessingDataHelper
      */
     protected $moduleHelper;
 
@@ -137,7 +137,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
         $this->setUpStoreManagerMock();
 
         $this->moduleHelper = $this->getObjectManagerHelper()->getObject(
-            EComprocessingDataHelper::class,
+            ecomprocessingDataHelper::class,
             [
                 'context'        => $this->contextMock,
                 'storeManager'   => $this->storeManagerMock,
@@ -216,7 +216,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getNotificationUrl()
+     * @covers ecomprocessingDataHelper::getNotificationUrl()
      */
     public function testGetNotificationUrl()
     {
@@ -271,7 +271,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::genTransactionId()
+     * @covers ecomprocessingDataHelper::genTransactionId()
      */
     public function testGenTransactionId()
     {
@@ -287,7 +287,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getTransactionAdditionalInfoValue()
+     * @covers ecomprocessingDataHelper::getTransactionAdditionalInfoValue()
      */
     public function testGetTransactionAdditionalInfoValue()
     {
@@ -300,11 +300,11 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_REDIRECT_URL     =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_REDIRECT_URL     =>
                         'https://example.com/redirect/url',
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
                         GenesisTransactionStates::PENDING_ASYNC,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         GenesisTransactionTypes::AUTHORIZE_3D
                 ]
             );
@@ -352,9 +352,9 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             ->willReturn(
                 [
                     \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS => [
-                        EComprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
+                        ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
                             GenesisTransactionStates::APPROVED,
-                        EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                        ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                             GenesisTransactionTypes::AUTHORIZE
                     ]
                 ]
@@ -364,14 +364,14 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             GenesisTransactionTypes::AUTHORIZE,
             $this->moduleHelper->getPaymentAdditionalInfoValue(
                 $paymentMock,
-                EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE
+                ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE
             )
         );
 
         $this->assertNull(
             $this->moduleHelper->getPaymentAdditionalInfoValue(
                 $paymentMock,
-                EComprocessingDataHelper::ADDITIONAL_INFO_KEY_REDIRECT_URL
+                ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_REDIRECT_URL
             )
         );
     }
@@ -387,9 +387,9 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
                         GenesisTransactionStates::DECLINED,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         GenesisTransactionTypes::SALE,
                 ]
             );
@@ -411,11 +411,11 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_STATUS           =>
                         GenesisTransactionStates::APPROVED,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         GenesisTransactionTypes::SALE,
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TERMINAL_TOKEN   =>
                         $gatewayTerminalToken
                 ]
             );
@@ -429,7 +429,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::maskException()
+     * @covers ecomprocessingDataHelper::maskException()
      */
     public function testMaskException()
     {
@@ -447,7 +447,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getArrayFromGatewayResponse()
+     * @covers ecomprocessingDataHelper::getArrayFromGatewayResponse()
      */
     public function testGetArrayFromGatewayResponse()
     {
@@ -473,7 +473,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
+     * @covers ecomprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
      */
     public function testSetOrderStateProcessing()
     {
@@ -512,7 +512,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
+     * @covers ecomprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
      */
     public function testSetOrderStatePending()
     {
@@ -559,7 +559,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
+     * @covers ecomprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
      */
     public function testSetOrderStateErrorOrDeclined()
     {
@@ -607,7 +607,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
+     * @covers ecomprocessingDataHelper::setOrderState($order, GenesisTransactionStates::APPROVED)
      */
     public function testSetOrderStateOnPaymentTimeoutOrVoid()
     {
@@ -655,7 +655,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getGlobalAllowedCurrencyCodes()
+     * @covers ecomprocessingDataHelper::getGlobalAllowedCurrencyCodes()
      */
     public function testGetGlobalAllowedCurrencyCodes()
     {
@@ -688,7 +688,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getGlobalAllowedCurrenciesOptions()
+     * @covers ecomprocessingDataHelper::getGlobalAllowedCurrenciesOptions()
      */
     public function testGetGlobalAllowedCurrenciesOptions()
     {
@@ -733,7 +733,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getLocale()
+     * @covers ecomprocessingDataHelper::getLocale()
      */
     public function testGetDefaultLocale()
     {
@@ -760,7 +760,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getLocale()
+     * @covers ecomprocessingDataHelper::getLocale()
      */
     public function testGetUnsupportedGatewayLocale()
     {
@@ -786,7 +786,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::canRefundTransaction()
+     * @covers ecomprocessingDataHelper::canRefundTransaction()
      */
     public function testCanRefundCaptureTransaction()
     {
@@ -798,7 +798,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         \Genesis\API\Constants\Transaction\Types::CAPTURE
                 ]
             );
@@ -811,7 +811,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::canRefundTransaction()
+     * @covers ecomprocessingDataHelper::canRefundTransaction()
      */
     public function testCanRefundPaySafeCardTransaction()
     {
@@ -823,7 +823,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         \Genesis\API\Constants\Transaction\Types::PAYSAFECARD
                 ]
             );
@@ -836,7 +836,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::canRefundTransaction()
+     * @covers ecomprocessingDataHelper::canRefundTransaction()
      */
     public function testCanRefundSaleTransaction()
     {
@@ -848,7 +848,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
             )
             ->willReturn(
                 [
-                    EComprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
+                    ecomprocessingDataHelper::ADDITIONAL_INFO_KEY_TRANSACTION_TYPE =>
                         \Genesis\API\Constants\Transaction\Types::SALE
                 ]
             );
@@ -861,7 +861,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getIsTransactionThreeDSecure()
+     * @covers ecomprocessingDataHelper::getIsTransactionThreeDSecure()
      */
     public function testGetIsTransactionThreeDSecure()
     {
@@ -891,7 +891,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getErrorMessageFromGatewayResponse()
+     * @covers ecomprocessingDataHelper::getErrorMessageFromGatewayResponse()
      */
     public function testGetSuccessErrorMessageFromGatewayResponse()
     {
@@ -921,7 +921,7 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
     }
 
     /**
-     * @covers EComprocessingDataHelper::getErrorMessageFromGatewayResponse()
+     * @covers ecomprocessingDataHelper::getErrorMessageFromGatewayResponse()
      */
     public function testGetFailedErrorMessageFromGatewayResponse()
     {
@@ -935,13 +935,13 @@ class DataTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
         );
 
         $this->assertEquals(
-            EComprocessingDataHelper::GENESIS_GATEWAY_ERROR_MESSAGE_DEFAULT,
+            ecomprocessingDataHelper::GENESIS_GATEWAY_ERROR_MESSAGE_DEFAULT,
             $gatewayResponseMessage
         );
     }
 
     /**
-     * @covers EComprocessingDataHelper::getErrorMessageFromGatewayResponse()
+     * @covers ecomprocessingDataHelper::getErrorMessageFromGatewayResponse()
      */
     public function testGetPendingAsyncSuccessErrorMessageFromGatewayResponse()
     {

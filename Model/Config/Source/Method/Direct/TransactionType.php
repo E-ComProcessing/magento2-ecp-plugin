@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Config\Source\Method\Direct;
+namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Direct;
 
 use \Genesis\API\Constants\Transaction\Types as TransactionTypes;
 use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
@@ -25,7 +25,7 @@ use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
 /**
  * Direct Transaction Types Model Source
  * Class TransactionType
- * @package EComprocessing\Genesis\Model\Config\Source\Method\Direct
+ * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Direct
  */
 class TransactionType implements \Magento\Framework\Option\ArrayInterface
 {

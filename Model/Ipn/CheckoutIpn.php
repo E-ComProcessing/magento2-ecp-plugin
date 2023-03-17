@@ -17,21 +17,21 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Ipn;
+namespace Ecomprocessing\Genesis\Model\Ipn;
 
 /**
  * Checkout Method IPN Handler Class
  * Class CheckoutIpn
- * @package EComprocessing\Genesis\Model\Ipn
+ * @package Ecomprocessing\Genesis\Model\Ipn
  */
-class CheckoutIpn extends \EComprocessing\Genesis\Model\Ipn\AbstractIpn
+class CheckoutIpn extends \Ecomprocessing\Genesis\Model\Ipn\AbstractIpn
 {
     /**
      * @return string
      */
     protected function getPaymentMethodCode()
     {
-        return \EComprocessing\Genesis\Model\Method\Checkout::CODE;
+        return \Ecomprocessing\Genesis\Model\Method\Checkout::CODE;
     }
 
     /**

@@ -17,15 +17,15 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
+namespace Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
 
 /**
- * Renderer for EComprocessing Direct Panel in System Configuration
+ * Renderer for Ecomprocessing Direct Panel in System Configuration
  *
  * Class DirectPayment
- * @package EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
+ * @package Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
  */
-class DirectPayment extends \EComprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
+class DirectPayment extends \Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
 {
     /**
      * Retrieves the Module Panel Css Class
@@ -33,6 +33,6 @@ class DirectPayment extends \EComprocessing\Genesis\Block\Adminhtml\System\Confi
      */
     protected function getBlockHeadCssClass()
     {
-        return "EComprocessingDirect";
+        return "EcomprocessingDirect";
     }
 }

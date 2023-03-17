@@ -17,9 +17,9 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Observer;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Observer;
 
-use EComprocessing\Genesis\Helper\Data as DataHelper;
+use Ecomprocessing\Genesis\Helper\Data as DataHelper;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Webapi\ErrorProcessor;
 use Magento\Framework\Event\Observer;
@@ -29,17 +29,17 @@ use Magento\Framework\Webapi\Exception as WebapiException;
 
 /**
  * Class AbstractObserverTest
- * @package EComprocessing\Genesis\Test\Unit\Model\Observer
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Observer
  */
-abstract class AbstractObserverTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
+abstract class AbstractObserverTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $observerInstance;
 
     /**
-     * @var \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $dataHelperMock;
 
@@ -77,8 +77,8 @@ abstract class AbstractObserverTest extends \EComprocessing\Genesis\Test\Unit\Ab
 
     /**
      * Gets observer's instance
-     * @return \EComprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|
-     * \EComprocessing\Genesis\Model\Observer\SalesOrderPaymentPlaceEnd
+     * @return \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|
+     * \Ecomprocessing\Genesis\Model\Observer\SalesOrderPaymentPlaceEnd
      */
     protected function getObserverInstance()
     {
@@ -87,7 +87,7 @@ abstract class AbstractObserverTest extends \EComprocessing\Genesis\Test\Unit\Ab
 
     /**
      * Get mock for data helper
-     * @return \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getDataHelperMock()
     {
@@ -117,7 +117,7 @@ abstract class AbstractObserverTest extends \EComprocessing\Genesis\Test\Unit\Ab
     {
         return $this->checkoutSessionMock = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getEComprocessingLastCheckoutError','setEComprocessingLastCheckoutError'])
+            ->setMethods(['getEcomprocessingLastCheckoutError','setEcomprocessingLastCheckoutError'])
             ->getMock();
     }
 

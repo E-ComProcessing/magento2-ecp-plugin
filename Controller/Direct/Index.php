@@ -17,15 +17,15 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller\Direct;
+namespace Ecomprocessing\Genesis\Controller\Direct;
 
 /**
  * Front Controller for Direct Method
  * it redirects to the 3D-Secure Form when applicable
  * Class Index
- * @package EComprocessing\Genesis\Controller\Direct
+ * @package Ecomprocessing\Genesis\Controller\Direct
  */
-class Index extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
+class Index extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction
 {
     /**
      * Redirect to the 3D-Secure Form or to the Final Checkout Success Page
@@ -37,10 +37,10 @@ class Index extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
         $order = $this->getOrder();
 
         if (isset($order)) {
-            $redirectUrl = $this->getCheckoutSession()->getEComprocessingCheckoutRedirectUrl();
+            $redirectUrl = $this->getCheckoutSession()->getEcomprocessingCheckoutRedirectUrl();
 
             if (isset($redirectUrl)) {
-                $this->getCheckoutSession()->setEComprocessingCheckoutRedirectUrl(null);
+                $this->getCheckoutSession()->setEcomprocessingCheckoutRedirectUrl(null);
                 $this->getResponse()->setRedirect($redirectUrl);
 
                 return;

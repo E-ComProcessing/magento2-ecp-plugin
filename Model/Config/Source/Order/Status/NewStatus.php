@@ -17,12 +17,12 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Config\Source\Order\Status;
+namespace Ecomprocessing\Genesis\Model\Config\Source\Order\Status;
 
 /**
  * Order Statuses source model
  * Class NewStatus
- * @package EComprocessing\Genesis\Model\Config\Source\Order\Status
+ * @package Ecomprocessing\Genesis\Model\Config\Source\Order\Status
  */
 class NewStatus extends \Magento\Sales\Model\Config\Source\Order\Status
 {

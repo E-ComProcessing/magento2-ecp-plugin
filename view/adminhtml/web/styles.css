@@ -16,6 +16,6 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-.config-heading.EComprocessingDirect:before { content:url(images/ecomprocessing_direct.png);float:right;}
-.config-heading.EComprocessingCheckout:before { content:url(images/ecomprocessing_checkout.png);float:right;}
-.headingEComprocessing strong { padding-left: 150px;background:url(images/ecomprocessing_small.png) no-repeat 0 0;line-height: 50px;}
+.config-heading.EcomprocessingDirect:before { content:url(images/ecomprocessing_direct.png);float:right;}
+.config-heading.EcomprocessingCheckout:before { content:url(images/ecomprocessing_checkout.png);float:right;}
+.headingEcomprocessing strong { padding-left: 150px;background:url(images/ecomprocessing_small.png) no-repeat 0 0;line-height: 50px;}

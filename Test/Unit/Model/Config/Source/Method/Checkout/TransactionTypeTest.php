@@ -17,10 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Checkout;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Checkout;
 
-use EComprocessing\Genesis\Helper\Checkout;
-use EComprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Helper\Checkout;
+use Ecomprocessing\Genesis\Helper\Data;
 use Genesis\API\Constants\Transaction\Names;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\ApplePay\PaymentTypes as ApplePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
@@ -31,18 +31,18 @@ use \Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
 /**
  * Class TransactionTypeTest
  *
- * @covers \EComprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType
- * @package EComprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Checkout
+ * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Config\Source\Method\Checkout
  */
 class TransactionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @covers \EComprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType::toOptionArray()
+     * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType::toOptionArray()
      */
     public function testToOptionArray()
     {
         $data        = [];
-        $sourceModel = new \EComprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType();
+        $sourceModel = new \Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\TransactionType();
 
         $transactionTypes = GenesisTransactionTypes::getWPFTransactionTypes();
         $excludedTypes    = Checkout::getRecurringTransactionTypes();

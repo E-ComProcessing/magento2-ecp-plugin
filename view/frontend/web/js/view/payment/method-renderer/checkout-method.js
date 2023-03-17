@@ -49,7 +49,7 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'EComprocessing_Genesis/payment/method/checkout/form'
+                template: 'Ecomprocessing_Genesis/payment/method/checkout/form'
             },
 
             placeOrder: function (data, event) {

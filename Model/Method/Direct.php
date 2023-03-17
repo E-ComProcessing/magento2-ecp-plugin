@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Method;
+namespace Ecomprocessing\Genesis\Model\Method;
 
 use Genesis\API\Constants\Transaction\Types;
 use Magento\Framework\DataObject;
@@ -27,7 +27,7 @@ use Magento\Quote\Api\Data\PaymentInterface;
 /**
  * Direct Payment Method Model Class
  * Class Direct
- * @package EComprocessing\Genesis\Model\Method
+ * @package Ecomprocessing\Genesis\Model\Method
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -47,10 +47,10 @@ class Direct extends Base
      * @param \Magento\Framework\App\Action\Context $actionContext
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \EComprocessing\Genesis\Logger\Logger $loggerHelper
+     * @param \Ecomprocessing\Genesis\Logger\Logger $loggerHelper
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param array $data
@@ -62,10 +62,10 @@ class Direct extends Base
         \Magento\Framework\App\Action\Context $actionContext,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \EComprocessing\Genesis\Logger\Logger $loggerHelper,
+        \Ecomprocessing\Genesis\Logger\Logger $loggerHelper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \EComprocessing\Genesis\Helper\Data $moduleHelper,
+        \Ecomprocessing\Genesis\Helper\Data $moduleHelper,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -445,13 +445,13 @@ class Direct extends Base
                     ->setReturnSuccessUrl(
                         $helper->getReturnUrl(
                             $this->getCode(),
-                            \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                            \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
                         )
                     )
                     ->setReturnFailureUrl(
                         $helper->getReturnUrl(
                             $this->getCode(),
-                            \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                            \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
                         )
                     );
         }
@@ -466,7 +466,7 @@ class Direct extends Base
 
             $this->getLogger()->error($logInfo);
 
-            $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
+            $this->getCheckoutSession()->setEcomprocessingLastCheckoutError(
                 $e->getMessage()
             );
 
@@ -511,7 +511,7 @@ class Direct extends Base
                 $this->getGenesisResponse()
             );
 
-            $this->getCheckoutSession()->setEComprocessingLastCheckoutError(
+            $this->getCheckoutSession()->setEcomprocessingLastCheckoutError(
                 $errorMessage
             );
 

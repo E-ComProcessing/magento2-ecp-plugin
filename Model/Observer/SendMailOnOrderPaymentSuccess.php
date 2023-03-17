@@ -17,22 +17,22 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Observer;
+namespace Ecomprocessing\Genesis\Model\Observer;
 
-use EComprocessing\Genesis\Model\Method\Checkout;
-use EComprocessing\Genesis\Model\Method\Direct;
+use Ecomprocessing\Genesis\Model\Method\Checkout;
+use Ecomprocessing\Genesis\Model\Method\Direct;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
  * Observer Class called on checkout_onepage_controller_success_action_sendmail event
  *
  * Class SendMailOnOrderPaymentSuccess
- * @package EComprocessing\Genesis\Model\Observer
+ * @package Ecomprocessing\Genesis\Model\Observer
  */
 class SendMailOnOrderPaymentSuccess implements ObserverInterface
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Config
+     * @var \Ecomprocessing\Genesis\Model\Config
      */
     protected $_configHelper;
 
@@ -55,14 +55,14 @@ class SendMailOnOrderPaymentSuccess implements ObserverInterface
      * @param \Magento\Sales\Model\OrderFactory $orderModel
      * @param \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \EComprocessing\Genesis\Model\Config $configHelper
+     * @param \Ecomprocessing\Genesis\Model\Config $configHelper
      * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Sales\Model\OrderFactory $orderModel,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \EComprocessing\Genesis\Model\Config $configHelper
+        \Ecomprocessing\Genesis\Model\Config $configHelper
     ) {
         $this->orderModel = $orderModel;
         $this->orderSender = $orderSender;

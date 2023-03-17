@@ -17,25 +17,25 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Observer;
+namespace Ecomprocessing\Genesis\Model\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
-use EComprocessing\Genesis\Model\Method\Checkout as GenesisCheckoutPaymentMethod;
-use EComprocessing\Genesis\Model\Method\Direct as GenesisDirectPaymentMethod;
+use Ecomprocessing\Genesis\Model\Method\Checkout as GenesisCheckoutPaymentMethod;
+use Ecomprocessing\Genesis\Model\Method\Direct as GenesisDirectPaymentMethod;
 
 class SalesOrderBeforeSaveObserver implements ObserverInterface
 {
     /**
-     * @var \EComprocessing\Genesis\Model\Config
+     * @var \Ecomprocessing\Genesis\Model\Config
      */
     protected $_configHelper;
 
     /**
-     * @param \EComprocessing\Genesis\Model\Config $configHelper
+     * @param \Ecomprocessing\Genesis\Model\Config $configHelper
      * @codeCoverageIgnore
      */
     public function __construct(
-        \EComprocessing\Genesis\Model\Config $configHelper
+        \Ecomprocessing\Genesis\Model\Config $configHelper
     ) {
         $this->_configHelper = $configHelper;
     }

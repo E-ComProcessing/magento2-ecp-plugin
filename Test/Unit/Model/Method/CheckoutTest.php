@@ -17,10 +17,10 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Method;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Method;
 
-use EComprocessing\Genesis\Helper\Data;
-use EComprocessing\Genesis\Model\Method\Checkout as CheckoutPaymentMethod;
+use Ecomprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Model\Method\Checkout as CheckoutPaymentMethod;
 use Genesis\API\Constants\Payment\Methods;
 use Magento\Framework\DataObject as MagentoDataObject;
 use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
@@ -28,10 +28,10 @@ use Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
 
 /**
  * Class CheckoutTest
- * @covers \EComprocessing\Genesis\Model\Method\Checkout
- * @package EComprocessing\Genesis\Test\Unit\Model\Method
+ * @covers \Ecomprocessing\Genesis\Model\Method\Checkout
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Method
  */
-class CheckoutTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\AbstractMethodTest
+class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\AbstractMethodTest
 {
     protected function getPaymentMethodClassName()
     {
@@ -268,15 +268,15 @@ class CheckoutTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstra
             ->withConsecutive(
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
                 ],
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
+                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
                 ],
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \EComprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
                 ]
             )
             ->willReturnOnConsecutiveCalls(
@@ -336,7 +336,7 @@ class CheckoutTest extends \EComprocessing\Genesis\Test\Unit\Model\Method\Abstra
             ->willReturnSelf();
 
         $this->checkoutSessionMock->expects(self::once())
-            ->method('setEComprocessingCheckoutRedirectUrl')
+            ->method('setEcomprocessingCheckoutRedirectUrl')
             ->with(
                 $gatewayResponse->redirect_url
             )

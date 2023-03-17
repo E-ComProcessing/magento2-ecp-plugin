@@ -17,17 +17,17 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller;
+namespace Ecomprocessing\Genesis\Controller;
 
 /**
  * Base Checkout Redirect Controller Class
  * Class AbstractCheckoutRedirectAction
- * @package EComprocessing\Genesis\Controller
+ * @package Ecomprocessing\Genesis\Controller
  */
-abstract class AbstractCheckoutRedirectAction extends \EComprocessing\Genesis\Controller\AbstractCheckoutAction
+abstract class AbstractCheckoutRedirectAction extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction
 {
     /**
-     * @var \EComprocessing\Genesis\Helper\Checkout
+     * @var \Ecomprocessing\Genesis\Helper\Checkout
      */
     protected $_checkoutHelper;
     /**
@@ -35,14 +35,14 @@ abstract class AbstractCheckoutRedirectAction extends \EComprocessing\Genesis\Co
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Magento\Sales\Model\OrderFactory $orderFactory
-     * @param \EComprocessing\Genesis\Helper\Checkout $checkoutHelper
+     * @param \Ecomprocessing\Genesis\Helper\Checkout $checkoutHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Sales\Model\OrderFactory $orderFactory,
-        \EComprocessing\Genesis\Helper\Checkout $checkoutHelper
+        \Ecomprocessing\Genesis\Helper\Checkout $checkoutHelper
     ) {
         parent::__construct($context, $logger, $checkoutSession, $orderFactory);
         $this->_checkoutHelper = $checkoutHelper;
@@ -50,7 +50,7 @@ abstract class AbstractCheckoutRedirectAction extends \EComprocessing\Genesis\Co
 
     /**
      * Get an Instance of the Magento Checkout Helper
-     * @return \EComprocessing\Genesis\Helper\Checkout
+     * @return \Ecomprocessing\Genesis\Helper\Checkout
      */
     protected function getCheckoutHelper()
     {

@@ -17,16 +17,16 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Model\Ipn;
+namespace Ecomprocessing\Genesis\Model\Ipn;
 
-use EComprocessing\Genesis\Helper\Data;
+use Ecomprocessing\Genesis\Helper\Data;
 use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 
 /**
  * Base IPN Handler Class
  *
  * Class AbstractIpn
- * @package EComprocessing\Genesis\Model\Ipn
+ * @package Ecomprocessing\Genesis\Model\Ipn
  */
 abstract class AbstractIpn
 {
@@ -40,11 +40,11 @@ abstract class AbstractIpn
      */
     protected $_logger;
     /**
-     * @var \EComprocessing\Genesis\Helper\Data
+     * @var \Ecomprocessing\Genesis\Helper\Data
      */
     protected $_moduleHelper;
     /**
-     * @var \EComprocessing\Genesis\Model\Config
+     * @var \Ecomprocessing\Genesis\Model\Config
      */
     protected $_configHelper;
     /**
@@ -87,7 +87,7 @@ abstract class AbstractIpn
      * @param \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender
      * @param \Magento\Sales\Model\Order\Email\Sender\CreditmemoSender $creditMemoSender
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \EComprocessing\Genesis\Helper\Data $moduleHelper
+     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
      * @param array $data
      */
     public function __construct(
@@ -96,7 +96,7 @@ abstract class AbstractIpn
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\CreditmemoSender $creditMemoSender,
         \Psr\Log\LoggerInterface $logger,
-        \EComprocessing\Genesis\Helper\Data $moduleHelper,
+        \Ecomprocessing\Genesis\Helper\Data $moduleHelper,
         array $data = []
     ) {
         $this->_context = $context;
@@ -236,7 +236,7 @@ abstract class AbstractIpn
 
     /**
      * Get an instance of the Module Config Helper Object
-     * @return \EComprocessing\Genesis\Model\Config
+     * @return \Ecomprocessing\Genesis\Model\Config
      */
     protected function getConfigHelper()
     {
@@ -263,7 +263,7 @@ abstract class AbstractIpn
 
     /**
      * Get an Instance of the Module Helper Object
-     * @return \EComprocessing\Genesis\Helper\Data
+     * @return \Ecomprocessing\Genesis\Helper\Data
      */
     protected function getModuleHelper()
     {

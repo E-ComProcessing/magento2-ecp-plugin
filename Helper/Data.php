@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Helper;
+namespace Ecomprocessing\Genesis\Helper;
 
 use Genesis\API\Constants\Transaction\Parameters\Mobile\GooglePay\PaymentTypes as GooglePaymentTypes;
 use Genesis\API\Constants\Transaction\Parameters\Wallets\PayPal\PaymentTypes as PayPalPaymentTypes;
@@ -31,7 +31,7 @@ use Magento\Sales\Model\Service\CreditmemoService;
  * Helper Class for all Payment Methods
  *
  * Class Data
- * @package EComprocessing\Genesis\Helper
+ * @package Ecomprocessing\Genesis\Helper
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -104,7 +104,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \EComprocessing\Genesis\Model\ConfigFactory $configFactory
+     * @param \Ecomprocessing\Genesis\Model\ConfigFactory $configFactory
      * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
      * @param \Magento\Customer\Model\Session $customerSession
      */
@@ -113,7 +113,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \EComprocessing\Genesis\Model\ConfigFactory $configFactory,
+        \Ecomprocessing\Genesis\Model\ConfigFactory $configFactory,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Customer\Model\Session $customerSession
     ) {
@@ -132,7 +132,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Creates an Instance of the Helper
      * @param  \Magento\Framework\ObjectManagerInterface $objectManager
-     * @return \EComprocessing\Genesis\Helper\Data
+     * @return \Ecomprocessing\Genesis\Helper\Data
      */
     public static function getInstance($objectManager)
     {
@@ -161,7 +161,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Get an Instance of the Config Factory Class
-     * @return \EComprocessing\Genesis\Model\ConfigFactory
+     * @return \Ecomprocessing\Genesis\Model\ConfigFactory
      */
     protected function getConfigFactory()
     {
@@ -472,7 +472,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**Get an Instance of a Method Object using the Method Code
      * @param string $methodCode
-     * @return \EComprocessing\Genesis\Model\Config
+     * @return \Ecomprocessing\Genesis\Model\Config
      */
     public function getMethodConfig($methodCode)
     {
@@ -1313,19 +1313,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             case GenesisTransactionTypes::GOOGLE_PAY:
                 return in_array(
                     self::GOOGLE_PAY_TRANSACTION_PREFIX . self::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE,
-                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                    $this->getMethodConfig(\Ecomprocessing\Genesis\Model\Method\Checkout::CODE)
                         ->getTransactionTypes()
                 );
             case GenesisTransactionTypes::PAY_PAL:
                 return in_array(
                     self::PAYPAL_TRANSACTION_PREFIX . self::PAYPAL_PAYMENT_TYPE_AUTHORIZE,
-                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                    $this->getMethodConfig(\Ecomprocessing\Genesis\Model\Method\Checkout::CODE)
                         ->getTransactionTypes()
                 );
             case GenesisTransactionTypes::APPLE_PAY:
                 return in_array(
                     self::APPLE_PAY_TRANSACTION_PREFIX . self::APPLE_PAY_PAYMENT_TYPE_AUTHORIZE,
-                    $this->getMethodConfig(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+                    $this->getMethodConfig(\Ecomprocessing\Genesis\Model\Method\Checkout::CODE)
                         ->getTransactionTypes()
                 );
             default:

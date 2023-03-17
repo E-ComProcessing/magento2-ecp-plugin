@@ -17,12 +17,12 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller;
+namespace Ecomprocessing\Genesis\Controller;
 
 /**
  * Base Controller Class
  * Class AbstractAction
- * @package EComprocessing\Genesis\Controller
+ * @package Ecomprocessing\Genesis\Controller
  */
 abstract class AbstractAction extends \Magento\Framework\App\Action\Action
 {

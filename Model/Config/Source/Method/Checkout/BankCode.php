@@ -17,30 +17,43 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency;
+namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
+
+use Genesis\API\Constants\Banks;
+use \Magento\Framework\Option\ArrayInterface;
 
 /**
- * Specific Currency Source
- * Class AllSpecificCurrencies
- * @package Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency
+ * Checkout Bank codes Model Source
+ * Class BankCode
+ * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
-class AllSpecificCurrencies implements \Magento\Framework\Option\ArrayInterface
+class BankCode implements ArrayInterface
 {
     /**
-     * Builds an array for the select control in the Admin Zone
+     * @var array
+     */
+    public static $availableBankCodes = [
+        Banks::CPI => 'Interac Combined Pay-in'
+    ];
+
+    /**
+     * Builds the options for the MultiSelect control in the Admin Zone
      * @return array
      */
     public function toOptionArray()
     {
-        return [
-            [
-                'value' => 0,
-                'label' => __('All Allowed Currencies'),
-            ],
-            [
-                'value' => 1,
-                'label' => __('Specific Currencies'),
-            ]
-        ];
+        $data = [];
+
+        foreach (self::$availableBankCodes as $value => $label) {
+            array_push(
+                $data,
+                [
+                    'value' => $value,
+                    'label' => __($label)
+                ]
+            );
+        }
+
+        return $data;
     }
 }

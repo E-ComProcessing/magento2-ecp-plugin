@@ -17,7 +17,7 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Controller;
+namespace Ecomprocessing\Genesis\Test\Unit\Controller;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Model\Session;
@@ -31,15 +31,15 @@ use Magento\Framework\App\ResponseInterface;
 
 /**
  * Class AbstractControllerTest
- * @package EComprocessing\Genesis\Test\Unit\Controller
+ * @package Ecomprocessing\Genesis\Test\Unit\Controller
  */
-abstract class AbstractControllerTest extends \EComprocessing\Genesis\Test\Unit\AbstractTestCase
+abstract class AbstractControllerTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     /**
-     * @var \EComprocessing\Genesis\Controller\Checkout\Index|
-     *      \EComprocessing\Genesis\Controller\Checkout\Redirect|
-     *      \EComprocessing\Genesis\Controller\Direct\Index|
-     *      \EComprocessing\Genesis\Controller\Direct\Redirect
+     * @var \Ecomprocessing\Genesis\Controller\Checkout\Index|
+     *      \Ecomprocessing\Genesis\Controller\Checkout\Redirect|
+     *      \Ecomprocessing\Genesis\Controller\Direct\Index|
+     *      \Ecomprocessing\Genesis\Controller\Direct\Redirect
      */
     protected $controllerInstance;
 
@@ -96,7 +96,7 @@ abstract class AbstractControllerTest extends \EComprocessing\Genesis\Test\Unit\
 
     /**
      * Gets controllers instance
-     * @return \EComprocessing\Genesis\Controller\AbstractAction
+     * @return \Ecomprocessing\Genesis\Controller\AbstractAction
      */
     protected function getControllerInstance()
     {
@@ -158,8 +158,8 @@ abstract class AbstractControllerTest extends \EComprocessing\Genesis\Test\Unit\
             ->setMethods(
                 [
                     'getLastRealOrderId',
-                    'getEComprocessingCheckoutRedirectUrl',
-                    'setEComprocessingCheckoutRedirectUrl'
+                    'getEcomprocessingCheckoutRedirectUrl',
+                    'setEcomprocessingCheckoutRedirectUrl'
                 ]
             )
             ->getMock();

@@ -17,14 +17,14 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Controller;
+namespace Ecomprocessing\Genesis\Controller;
 
 /**
  * Base Checkout Controller Class
  * Class AbstractCheckoutAction
- * @package EComprocessing\Genesis\Controller
+ * @package Ecomprocessing\Genesis\Controller
  */
-abstract class AbstractCheckoutAction extends \EComprocessing\Genesis\Controller\AbstractAction
+abstract class AbstractCheckoutAction extends \Ecomprocessing\Genesis\Controller\AbstractAction
 {
     const ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_PATH = 'checkout/onepage/success';
     const ROUTE_PATTERN_CHECKOUT_ONEPAGE_SUCCESS_ARGS = [];

@@ -17,20 +17,20 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
-namespace EComprocessing\Genesis\Test\Unit\Model\Ipn;
+namespace Ecomprocessing\Genesis\Test\Unit\Model\Ipn;
 
-use EComprocessing\Genesis\Model\Ipn\CheckoutIpn;
-use EComprocessing\Genesis\Helper\Data as DataHelper;
+use Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn;
+use Ecomprocessing\Genesis\Helper\Data as DataHelper;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 
 /**
  * Class CheckoutIpnTest
- * @covers \EComprocessing\Genesis\Model\Ipn\Checkout
- * @package EComprocessing\Genesis\Test\Unit\Model\Ipn
+ * @covers \Ecomprocessing\Genesis\Model\Ipn\Checkout
+ * @package Ecomprocessing\Genesis\Test\Unit\Model\Ipn
  */
 
-class CheckoutIpnTest extends \EComprocessing\Genesis\Test\Unit\Model\Ipn\AbstractIpnTest
+class CheckoutIpnTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Ipn\AbstractIpnTest
 {
     const UNIQUE_ID_NAME                    = 'wpf_unique_id';
 
@@ -103,7 +103,7 @@ class CheckoutIpnTest extends \EComprocessing\Genesis\Test\Unit\Model\Ipn\Abstra
 
     /**
      * Get mock for data helper
-     * @return \EComprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Ecomprocessing\Genesis\Helper\Data|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getDataHelperMock()
     {
@@ -121,7 +121,7 @@ class CheckoutIpnTest extends \EComprocessing\Genesis\Test\Unit\Model\Ipn\Abstra
 
         $this->dataHelperMock->expects(self::once())
             ->method('getMethodConfig')
-            ->with(\EComprocessing\Genesis\Model\Method\Checkout::CODE)
+            ->with(\Ecomprocessing\Genesis\Model\Method\Checkout::CODE)
             ->willReturn(
                 $this->configHelperMock
             );
