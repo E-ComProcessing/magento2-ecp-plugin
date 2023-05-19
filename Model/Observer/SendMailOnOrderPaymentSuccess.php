@@ -20,7 +20,6 @@
 namespace Ecomprocessing\Genesis\Model\Observer;
 
 use Ecomprocessing\Genesis\Model\Method\Checkout;
-use Ecomprocessing\Genesis\Model\Method\Direct;
 use Magento\Framework\Event\ObserverInterface;
 
 /**
@@ -85,7 +84,7 @@ class SendMailOnOrderPaymentSuccess implements ObserverInterface
         $order = $this->orderModel->create()->load($orderIds[0]);
         $methodCode = $order->getPayment()->getMethodInstance()->getCode();
 
-        if (!in_array($methodCode, [Checkout::CODE, Direct::CODE])) {
+        if (!in_array($methodCode, [Checkout::CODE])) {
             return;
         }
 

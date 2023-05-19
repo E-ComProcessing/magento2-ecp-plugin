@@ -22,9 +22,8 @@ namespace Ecomprocessing\Genesis\Test\Unit\Model\Method;
 use Ecomprocessing\Genesis\Helper\Data;
 use Ecomprocessing\Genesis\Model\Method\Checkout as CheckoutPaymentMethod;
 use Genesis\API\Constants\Payment\Methods;
-use Magento\Framework\DataObject as MagentoDataObject;
-use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 use Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
+use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
 
 /**
  * Class CheckoutTest
@@ -90,7 +89,6 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
                         Methods::GIRO_PAY . Data::PPRO_TRANSACTION_SUFFIX,
                         Methods::PRZELEWY24 . Data::PPRO_TRANSACTION_SUFFIX,
                         Methods::SAFETY_PAY . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::TRUST_PAY . Data::PPRO_TRANSACTION_SUFFIX,
                         Methods::BCMC . Data::PPRO_TRANSACTION_SUFFIX,
                         Methods::MYBANK . Data::PPRO_TRANSACTION_SUFFIX,
                         Methods::IDEAL . Data::PPRO_TRANSACTION_SUFFIX
@@ -142,9 +140,6 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
                             'payment_method' => GenesisPaymentMethods::SAFETY_PAY,
                         ],
                         [
-                            'payment_method' => GenesisPaymentMethods::TRUST_PAY,
-                        ],
-                        [
                             'payment_method' => GenesisPaymentMethods::BCMC,
                         ],
                         [
@@ -170,18 +165,9 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
     {
         $orderId = $this->getGeneratedOrderId();
 
-        $this->scopeConfigMock->expects(static::exactly(2))
+        $this->scopeConfigMock->expects(static::exactly(4))
             ->method('getValue')
-            ->with("payment/{$this->getPaymentMethodCode()}/transaction_types", 'store', null)
-            ->willReturn(
-                implode(
-                    ',',
-                    [
-                        GenesisTransactionTypes::AUTHORIZE,
-                        GenesisTransactionTypes::SOFORT,
-                    ]
-                )
-            );
+            ->will($this->returnCallback([$this, 'configCallback']));
 
         $orderMock = $this->getOrderMock();
 
@@ -198,7 +184,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
             ->with($orderId)
             ->willReturn(
                 sprintf(
-                    '%s_%s',
+                    '%s-%s',
                     $orderId,
                     sha1(uniqid())
                 )
@@ -346,5 +332,34 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
             $this->paymentMock,
             self::ORDER_AMOUNT
         );
+    }
+
+    /**
+     * Scope Config Method Settings values
+     *
+     * @param ...$args
+     * @return string
+     */
+    public function configCallback(...$args)
+    {
+        if ($args[0] === "payment/{$this->getPaymentMethodCode()}/transaction_types") {
+            return implode(
+                ',',
+                [
+                    GenesisTransactionTypes::AUTHORIZE,
+                    GenesisTransactionTypes::SOFORT,
+                ]
+            );
+        }
+
+        if ($args[0] === "payment/{$this->getPaymentMethodCode()}/sca_exemption") {
+            return 'low_value';
+        }
+
+        if ($args[0] === "payment/{$this->getPaymentMethodCode()}/sca_exemption_code") {
+            return '100';
+        }
+
+        return '';
     }
 }

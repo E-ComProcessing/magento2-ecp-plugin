@@ -37,9 +37,7 @@ abstract class AbstractControllerTest extends \Ecomprocessing\Genesis\Test\Unit\
 {
     /**
      * @var \Ecomprocessing\Genesis\Controller\Checkout\Index|
-     *      \Ecomprocessing\Genesis\Controller\Checkout\Redirect|
-     *      \Ecomprocessing\Genesis\Controller\Direct\Index|
-     *      \Ecomprocessing\Genesis\Controller\Direct\Redirect
+     *      \Ecomprocessing\Genesis\Controller\Checkout\Redirect
      */
     protected $controllerInstance;
 
@@ -292,7 +290,7 @@ abstract class AbstractControllerTest extends \Ecomprocessing\Genesis\Test\Unit\
     /**
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

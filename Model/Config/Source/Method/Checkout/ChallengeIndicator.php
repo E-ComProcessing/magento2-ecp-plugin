@@ -19,38 +19,33 @@
 
 namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
 
-use Genesis\API\Constants\Banks;
-use \Magento\Framework\Option\ArrayInterface;
+use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Checkout Bank codes Model Source
  * Class BankCode
  * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
-class BankCode implements ArrayInterface
+class ChallengeIndicator implements OptionSourceInterface
 {
-    /**
-     * @var array
-     */
-    public static $availableBankCodes = [
-        Banks::CPI => 'Interac Combined Pay-in',
-        Banks::BCT => 'Bancontact',
+    protected $indicators = [
+        ChallengeIndicators::NO_PREFERENCE          => 'No Preference',
+        ChallengeIndicators::NO_CHALLENGE_REQUESTED => 'No Challenge Requested',
+        ChallengeIndicators::PREFERENCE             => 'Preference',
+        ChallengeIndicators::MANDATE                => 'Mandate'
     ];
 
-    /**
-     * Builds the options for the MultiSelect control in the Admin Zone
-     * @return array
-     */
     public function toOptionArray()
     {
         $data = [];
 
-        foreach (self::$availableBankCodes as $value => $label) {
+        foreach ($this->indicators as $constant => $display) {
             array_push(
                 $data,
                 [
-                    'value' => $value,
-                    'label' => __($label)
+                    'value' => $constant,
+                    'label' => __($display)
                 ]
             );
         }

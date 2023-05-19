@@ -27,7 +27,6 @@ GNU General Public License for more details.
                 <fieldset_css>complex</fieldset_css>
                 <comment>Accept payments through E-Comprocessing's Payment Gateway - Genesis</comment>
                 <include path="Ecomprocessing_Genesis::system/method_checkout.xml"/>
-                <include path="Ecomprocessing_Genesis::system/method_direct.xml"/>
             </group>
         </section>
     </system>

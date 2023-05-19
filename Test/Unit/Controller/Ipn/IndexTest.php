@@ -22,7 +22,6 @@ namespace Ecomprocessing\Genesis\Test\Unit\Controller\Ipn;
 use Ecomprocessing\Genesis\Controller\Ipn\Index as IndexController;
 
 use Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn;
-use Ecomprocessing\Genesis\Model\Ipn\DirectIpn;
 
 /**
  * Class IndexTest
@@ -35,11 +34,6 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
      * @var \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $checkoutIpnMock;
-
-    /**
-     * @var \Ecomprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $directIpnMock;
 
     /**
      * Gets controller's fully qualified class name
@@ -63,26 +57,13 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * Get mock for Direct IPN
-     * @return \Ecomprocessing\Genesis\Model\Ipn\DirectIpn|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getDirectIpnMock()
-    {
-        return $this->directIpnMock = $this->getMockBuilder(DirectIpn::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['handleGenesisNotification'])
-            ->getMock();
-    }
-
-    /**
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->getCheckoutIpnMock();
-        $this->getDirectIpnMock();
     }
 
     /**
@@ -176,61 +157,6 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Controller\Ipn\Index::execute()
-     */
-    public function testExecutePostWithUniqueId()
-    {
-        $postParams = [
-            'unique_id' => '12345678901234567890123456789012',
-            'signature' => '1234567890123456789012345678901234567890'
-        ];
-
-        $responseBody = self::getResponseBody($postParams);
-
-        $this->httpRequestMock->expects(self::once())
-            ->method('isPost')
-            ->willReturn(true);
-
-        $this->httpRequestMock->expects(self::any())
-            ->method('getPostValue')
-            ->willReturn($postParams);
-
-        $this->objectManagerMock->expects(self::once())
-            ->method('create')
-            ->with(
-                'Ecomprocessing\Genesis\Model\Ipn\DirectIpn',
-                [
-                    'data' => $postParams
-                ]
-            )
-            ->willReturn($this->checkoutIpnMock);
-
-        $this->checkoutIpnMock->expects(self::once())
-            ->method('handleGenesisNotification')
-            ->willReturn($responseBody);
-
-        $this->responseInterfaceMock->expects(self::once())
-            ->method('setHeader')
-            ->with('Content-type', 'application/xml')
-            ->willReturnSelf();
-
-        $this->responseInterfaceMock->expects(self::once())
-            ->method('setBody')
-            ->with($responseBody)
-            ->willReturnSelf();
-
-        $this->responseInterfaceMock->expects(self::atLeastOnce())
-            ->method('setHttpResponseCode')
-            ->with(\Magento\Framework\Webapi\Response::HTTP_OK)
-            ->willReturnSelf();
-
-        $this->responseInterfaceMock->expects(self::once())
-            ->method('sendResponse');
-
-        $this->getControllerInstance()->execute();
-    }
-
-    /**
      * Gets array element if exists
      * @param array $array
      * @param string $key
@@ -248,13 +174,7 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
      */
     protected static function getResponseBody($postParams)
     {
-        if ($unique_id = self::getArrayElement($postParams, 'unique_id')) {
-            return '<?xml version="1.0" encoding="UTF-8"?>
-<notification_echo>
-  <unique_id>' . $unique_id . '</unique_id>
-</notification_echo>
-';
-        } elseif ($wpf_unique_id = self::getArrayElement($postParams, 'wpf_unique_id')) {
+        if ($wpf_unique_id = self::getArrayElement($postParams, 'wpf_unique_id')) {
             return '<?xml version="1.0" encoding="UTF-8"?>
 <notification_echo>
   <wpf_unique_id>' . $wpf_unique_id . '</wpf_unique_id>

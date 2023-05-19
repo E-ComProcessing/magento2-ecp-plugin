@@ -4,18 +4,10 @@
     <virtualType name="Ecomprocessing\Genesis\Model\ConfigProvider" type="Magento\Payment\Model\CcGenericConfigProvider">
         <arguments>
             <argument name="methodCodes" xsi:type="array">
-                <item name="ecomprocessing_direct" xsi:type="const">Ecomprocessing\Genesis\Model\Method\Direct::CODE</item>
                 <item name="ecomprocessing_checkout" xsi:type="const">Ecomprocessing\Genesis\Model\Method\Checkout::CODE</item>
             </argument>
         </arguments>
     </virtualType>
-    <type name="Magento\Checkout\Model\CompositeConfigProvider">
-        <arguments>
-            <argument name="configProviders" xsi:type="array">
-                <item name="ecomprocessing_direct_config_provider" xsi:type="object">Ecomprocessing\Genesis\Model\ConfigProvider</item>
-            </argument>
-        </arguments>
-    </type>
     <type name="Magento\Framework\App\Request\CsrfValidator">
         <plugin name="csrf_validator_skip" type="Ecomprocessing\Genesis\Plugin\CsrfValidatorSkip" />
     </type>

@@ -19,22 +19,22 @@
 
 namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
 
-use Genesis\API\Constants\Banks;
-use \Magento\Framework\Option\ArrayInterface;
+use Genesis\API\Constants\Transaction\Parameters\ScaExemptions;
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Checkout Bank codes Model Source
  * Class BankCode
  * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
-class BankCode implements ArrayInterface
+class ScaExemption implements OptionSourceInterface
 {
     /**
      * @var array
      */
-    public static $availableBankCodes = [
-        Banks::CPI => 'Interac Combined Pay-in',
-        Banks::BCT => 'Bancontact',
+    protected $exemptions = [
+        ScaExemptions::EXEMPTION_LOW_RISK  => 'Low Risk',
+        ScaExemptions::EXEMPTION_LOW_VALUE => 'Low Value'
     ];
 
     /**
@@ -45,7 +45,7 @@ class BankCode implements ArrayInterface
     {
         $data = [];
 
-        foreach (self::$availableBankCodes as $value => $label) {
+        foreach ($this->exemptions as $value => $label) {
             array_push(
                 $data,
                 [

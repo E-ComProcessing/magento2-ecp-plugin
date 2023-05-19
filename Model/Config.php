@@ -190,8 +190,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
     {
         return !empty($this->getUserName()) &&
                !empty($this->getPassword()) &&
-               !empty($this->getTransactionTypes()) &&
-               ($methodCode != \Ecomprocessing\Genesis\Model\Method\Direct::CODE || !empty($this->getToken()));
+               !empty($this->getTransactionTypes());
     }
 
     /**
@@ -306,7 +305,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
                 'trim',
                 explode(
                     ',',
-                    $this->getValue('transaction_types')
+                    $this->getValue('transaction_types') ?? ''
                 )
             );
     }
@@ -343,7 +342,7 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
             'trim',
             explode(
                 ',',
-                $this->getValue('specific_currencies')
+                $this->getValue('specific_currencies') ?? ''
             )
         );
     }
@@ -372,8 +371,48 @@ class Config implements \Magento\Payment\Model\Method\ConfigInterface
                 'trim',
                 explode(
                     ',',
-                    $this->getValue('bank_codes')
+                    $this->getValue('bank_codes') ?? ''
                 )
             );
+    }
+
+    /**
+     * Get is 3DSv2 allowed
+     *
+     * @return bool
+     */
+    public function isThreedsAllowed()
+    {
+        return $this->isFlagChecked($this->_methodCode, 'threeds_allowed');
+    }
+
+    /**
+     * Get the current selected Challenge Indicator
+     *
+     * @return string
+     */
+    public function getThreedsChallengeIndicator()
+    {
+        return $this->getValue('threeds_challenge_indicator');
+    }
+
+    /**
+     * Return SCA Exemption configured value
+     *
+     * @return string|null
+     */
+    public function getScaExemption()
+    {
+        return $this->getValue('sca_exemption');
+    }
+
+    /**
+     * Return SCA Exemptions configured amount
+     *
+     * @return float|null
+     */
+    public function getScaExemptionAmount()
+    {
+        return (float) $this->getValue('sca_exemption_amount');
     }
 }

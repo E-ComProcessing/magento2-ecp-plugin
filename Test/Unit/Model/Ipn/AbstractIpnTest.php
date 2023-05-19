@@ -38,7 +38,7 @@ use Genesis\API\Notification as Notification;
 abstract class AbstractIpnTest extends \Ecomprocessing\Genesis\Test\Unit\AbstractTestCase
 {
     /**
-     * @var \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\Ecomprocessing\Genesis\Model\Ipn\DirectIpn
+     * @var \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn
      */
     protected $ipnInstance;
 
@@ -123,7 +123,7 @@ abstract class AbstractIpnTest extends \Ecomprocessing\Genesis\Test\Unit\Abstrac
 
     /**
      * Gets IPN model instance
-     * @return \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn|\Ecomprocessing\Genesis\Model\Ipn\DirectIpn
+     * @return \Ecomprocessing\Genesis\Model\Ipn\CheckoutIpn
      */
     protected function getIpnInstance()
     {
@@ -214,7 +214,7 @@ abstract class AbstractIpnTest extends \Ecomprocessing\Genesis\Test\Unit\Abstrac
      */
     protected function getOrderMock()
     {
-        list($incrementId) = explode('_', $this->reconciliationObj->transaction_id);
+        list($incrementId) = explode('-', $this->reconciliationObj->transaction_id);
 
         $orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -397,7 +397,7 @@ abstract class AbstractIpnTest extends \Ecomprocessing\Genesis\Test\Unit\Abstrac
     /**
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

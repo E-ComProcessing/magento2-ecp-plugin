@@ -31,10 +31,6 @@ define(
             {
                 type: 'ecomprocessing_checkout',
                 component: 'Ecomprocessing_Genesis/js/view/payment/method-renderer/checkout-method'
-            },
-            {
-                type: 'ecomprocessing_direct',
-                component: 'Ecomprocessing_Genesis/js/view/payment/method-renderer/direct-method'
             }
         );
 
