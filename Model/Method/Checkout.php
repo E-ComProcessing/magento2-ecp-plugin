@@ -124,7 +124,7 @@ class Checkout extends Base
         $processed_list = [];
         $alias_map      = [];
 
-        $selected_types = $this->getConfigHelper()->getTransactionTypes();
+        $selected_types = $this->getSelectedTransactionTypes();
         $ppro_suffix    = Data::PPRO_TRANSACTION_SUFFIX;
         $methods        = GenesisPaymentMethods::getMethods();
 
@@ -272,6 +272,15 @@ class Checkout extends Base
                         },
                         $this->getConfigHelper()->getBankCodes()
                     );
+                    break;
+                case GenesisTransactionTypes::PAYSAFECARD:
+                    $helper        = $this->getModuleHelper();
+                    $userId        = $helper->getCurrentUserId();
+                    $customerId = empty($userId) ? $helper->getCurrentUserIdHash() : $userId;
+
+                    $parameters = [
+                        'customer_id' => $customerId
+                    ];
                     break;
             }
 
@@ -862,5 +871,25 @@ class Checkout extends Base
         if ($wpfAmount <= $scaAmountValue) {
             $request->setScaExemption($scaValue);
         }
+    }
+
+    /**
+     * Order the Selected Transaction Type by shifting the Credit Card Transaction Types in front
+     *
+     * @return array|string[]
+     */
+    protected function getSelectedTransactionTypes()
+    {
+        $selectedTypes   = $this->getConfigHelper()->getTransactionTypes();
+        $creditCardTypes = GenesisTransactionTypes::getCardTransactionTypes();
+
+        asort($selectedTypes);
+
+        $selectedCreditCardTypes = array_intersect($creditCardTypes, $selectedTypes);
+
+        return array_merge(
+            $selectedCreditCardTypes,
+            array_diff($selectedTypes, $selectedCreditCardTypes)
+        );
     }
 }
