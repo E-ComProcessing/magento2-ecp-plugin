@@ -1,7 +1,6 @@
 E-Comprocessing Gateway Module for Magento 2 CE, EE, ECE
 =============================
 
-[![Build Status](https://img.shields.io/travis/Ecomprocessing/magento2-ecp-plugin.svg?style=flat)](https://travis-ci.org/Ecomprocessing/magento2-ecp-plugin)
 [![Latest Stable Version](https://poser.pugx.org/ecomprocessing/magento2-ecp-plugin/v/stable)](https://packagist.org/packages/ecomprocessing/magento2-ecp-plugin)
 [![Total Downloads](https://img.shields.io/packagist/dt/ecomprocessing/magento2-ecp-plugin.svg?style=flat)](https://packagist.org/packages/ecomprocessing/magento2-ecp-plugin)
 [![Software License](https://img.shields.io/badge/license-GPL-green.svg?style=flat)](http://opensource.org/licenses/gpl-2.0.php)
@@ -11,8 +10,8 @@ This is a Payment Module for Magento 2, that gives you the ability to process pa
 Requirements
 ------------
 
-* Magento 2 CE, EE, ECE or higher (Tested up to __ 2.4.6-p3__)
-* [GenesisPHP v1.24.1](https://github.com/GenesisGateway/genesis_php/releases/tag/1.24.1) - (Integrated in Module)
+* Magento 2 CE, EE, ECE or higher (Tested up to __2.4.7-p1__)
+* [GenesisPHP v2.0.2](https://github.com/GenesisGateway/genesis_php/releases/tag/2.0.2) - (Integrated in Module)
 
 Installation (composer)
 ---------------------
@@ -48,7 +47,7 @@ Installation (manual)
 * Install GenesisGateway Client Library
     
     ```sh
-    $ composer require genesisgateway/genesis_php:1.24.1@stable
+    $ composer require genesisgateway/genesis_php:2.0.2@stable
     ```
 
 * Enable Payment Module 
@@ -117,7 +116,6 @@ Supported Transactions
     * __eps__
     * __eZeeWallet__
     * __Fashioncheque__
-    * __GiroPay__
     * __Google Pay__
     * __iDeal__
     * __iDebit__
@@ -134,7 +132,9 @@ Supported Transactions
     * __Online Banking__
         * __Interac Combined Pay-in (CPI)__
         * __Bancontact (BCT)__
-        * __Blik One Click (BLK)__
+        * __BLIK (BLK)__
+        * __SPEI (SE)__
+        * __LatiPay (PID)__
     * __OXXO__
     * __P24__
     * __Pago Facil__
@@ -144,7 +144,6 @@ Supported Transactions
     * __PIX__
     * __POLi__
     * __Post Finance__
-    * __PPRO__
     * __PSE__
     * __RapiPago__
     * __Redpagos__
@@ -167,4 +166,46 @@ _Note_: If you have trouble with your credentials or terminal configuration, get
 
 You're now ready to process payments through our gateway.
 
-[support]: mailto:tech-support@e-comprocessing.com
+[support]: mailto:tech-support@e-comprocessing.net
+
+Development
+------------
+*  Composer script to install Magento and E-Comprocessing Payment Gateway in Test/Dummy folder.
+
+    ```sh
+    $ composer install-magento
+    ```
+    If the Test/Dummy folder already exists the script will only update the E-Comprocessing Payment Gateway without installing Magento.   
+    
+    The credentials for `repo.magento.com` can be provided in an `auth.json` file inside the root of the project or by passing `repo_user` and `repo_name`.
+  
+    ```sh
+    $ composer install-magento repo_user=XXX repo_pass=XXX
+    ```
+
+* Composer script to run PHPUnit tests
+
+    ```sh
+    $ composer test-phpunit
+    ```
+
+* Composer script to install Magento and run PHPUnit tests
+
+    ```sh
+    $ composer test-magento
+    ```
+    or 
+  
+    ```sh
+    $ composer test-magento repo_user=XXX repo_pass=XXX
+    ```
+* Composer script to run PHP Code Sniffer
+
+    ```sh
+    $ composer test-phpcs
+    ```
+* Composer script to run PHP Mess Detector
+
+    ```sh
+    $ composer test-phpmd
+    ```

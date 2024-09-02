@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2018 E-Comprocessing Ltd.
+ * Copyright (C) 2018-2024 E-Comprocessing Ltd.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,74 +13,113 @@
  * GNU General Public License for more details.
  *
  * @author      E-Comprocessing
- * @copyright   2018 E-Comprocessing Ltd.
+ * @copyright   2018-2024 E-Comprocessing Ltd.
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
 namespace Ecomprocessing\Genesis\Model\Method;
 
 use Ecomprocessing\Genesis\Helper\Data;
-use Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\BankCode;
-use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\CardTypes;
-use Genesis\API\Constants\Transaction\Parameters\PayByVouchers\RedeemTypes;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\CardHolderAccount\PasswordChangeIndicators;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\MerchantRisk\DeliveryTimeframes;
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Purchase\Categories;
-use Genesis\API\Constants\Transaction\States;
-use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
-use Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
-use Genesis\API\Request;
+use Ecomprocessing\Genesis\Logger\Logger;
+use Ecomprocessing\Genesis\Helper\Threeds;
+use Exception;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\CardHolderAccount\PasswordChangeIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\MerchantRisk\DeliveryTimeframes;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\Purchase\Categories;
+use Genesis\Api\Constants\Transaction\States;
+use Genesis\Api\Constants\Transaction\Types as GenesisTransactionTypes;
+use Genesis\Api\Request;
+use Genesis\Api\Request\Wpf\Create;
+use Genesis\Exceptions\ErrorParameter;
+use Genesis\Exceptions\InvalidArgument;
+use Genesis\Exceptions\InvalidMethod;
 use Genesis\Genesis;
+use Magento\Checkout\Model\Session;
+use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\App\Action\Context as ActionContext;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\State\InputMismatchException;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Magento\Framework\Webapi\Exception as WebApiException;
+use Magento\Payment\Model\InfoInterface;
+use Magento\Payment\Model\MethodInterface;
+use Magento\Quote\Api\Data\CartInterface;
+use Magento\Sales\Api\OrderPaymentRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use stdClass;
 
 /**
  * Checkout Payment Method Model Class
+ *
  * Class Checkout
- * @package Ecomprocessing\Genesis\Model\Method
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Checkout extends Base
 {
 
-    const CODE                     = 'ecomprocessing_checkout';
-    const CUSTOMER_CONSUMER_ID_KEY = 'consumer_id';
+    public const CODE                     = 'ecomprocessing_checkout';
+    public const CUSTOMER_CONSUMER_ID_KEY = 'consumer_id';
 
     /**
      * Checkout Method Code
+     *
+     * @var string
      */
     protected $_code = self::CODE;
 
     /**
+     * @var Threeds
+     */
+    protected $_threedsHelper;
+
+    /**
+     * @var CustomerRepositoryInterface
+     */
+    protected $_customerRepositoryInterface;
+
+    /**
      * Checkout constructor.
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\App\Action\Context $actionContext
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Ecomprocessing\Genesis\Logger\Logger $loggerHelper
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Ecomprocessing\Genesis\Helper\Data $moduleHelper
-     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface
-     * @param \Ecomprocessing\Genesis\Helper\Threeds $threedsHelper
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
      *
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param Context                         $context
+     * @param ActionContext                   $actionContext
+     * @param Registry                        $registry
+     * @param ScopeConfigInterface            $scopeConfig
+     * @param Logger                          $loggerHelper
+     * @param StoreManagerInterface           $storeManager
+     * @param Session                         $checkoutSession
+     * @param Data                            $moduleHelper
+     * @param CustomerRepositoryInterface     $customerRepositoryInterface
+     * @param Threeds                         $threedsHelper
+     * @param OrderPaymentRepositoryInterface $paymentRepository
+     * @param AbstractResource|null           $resource
+     * @param AbstractDb|null                 $resourceCollection
+     * @param array                           $data
+     *
+     * @throws LocalizedException
      */
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\App\Action\Context $actionContext,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Ecomprocessing\Genesis\Logger\Logger  $loggerHelper,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Ecomprocessing\Genesis\Helper\Data $moduleHelper,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepositoryInterface,
-        \Ecomprocessing\Genesis\Helper\Threeds $threedsHelper,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
+        Context                         $context,
+        ActionContext                   $actionContext,
+        Registry                        $registry,
+        ScopeConfigInterface            $scopeConfig,
+        Logger                          $loggerHelper,
+        StoreManagerInterface           $storeManager,
+        Session                         $checkoutSession,
+        Data                            $moduleHelper,
+        CustomerRepositoryInterface     $customerRepositoryInterface,
+        Threeds                         $threedsHelper,
+        OrderPaymentRepositoryInterface $paymentRepository,
+        AbstractResource                $resource = null,
+        AbstractDb                      $resourceCollection = null,
+        array                           $data = []
     ) {
         $loggerHelper->setFilename('checkout');
 
@@ -89,6 +128,7 @@ class Checkout extends Base
             $registry,
             $scopeConfig,
             $loggerHelper,
+            $paymentRepository,
             $resource,
             $resourceCollection,
             $data
@@ -108,15 +148,17 @@ class Checkout extends Base
 
     /**
      * Get Default Payment Action On Payment Complete Action
+     *
      * @return string
      */
     public function getConfigPaymentAction()
     {
-        return \Magento\Payment\Model\Method\AbstractMethod::ACTION_ORDER;
+        return MethodInterface::ACTION_ORDER;
     }
 
     /**
      * Get Available Checkout Transaction Types
+     *
      * @return array
      */
     public function getCheckoutTransactionTypes()
@@ -125,14 +167,8 @@ class Checkout extends Base
         $alias_map      = [];
 
         $selected_types = $this->getSelectedTransactionTypes();
-        $ppro_suffix    = Data::PPRO_TRANSACTION_SUFFIX;
-        $methods        = GenesisPaymentMethods::getMethods();
 
-        foreach ($methods as $method) {
-            $alias_map[$method . $ppro_suffix] = GenesisTransactionTypes::PPRO;
-        }
-
-        $alias_map = array_merge($alias_map, [
+        $alias_map      = array_merge($alias_map, [
             Data::GOOGLE_PAY_TRANSACTION_PREFIX . Data::GOOGLE_PAY_PAYMENT_TYPE_AUTHORIZE =>
                 GenesisTransactionTypes::GOOGLE_PAY,
             Data::GOOGLE_PAY_TRANSACTION_PREFIX . Data::GOOGLE_PAY_PAYMENT_TYPE_SALE      =>
@@ -166,7 +202,6 @@ class Checkout extends Base
             $processed_list[$transaction_type]['parameters'][] = [
                 $key => str_replace(
                     [
-                        $ppro_suffix,
                         Data::GOOGLE_PAY_TRANSACTION_PREFIX,
                         Data::PAYPAL_TRANSACTION_PREFIX,
                         Data::APPLE_PAY_TRANSACTION_PREFIX,
@@ -182,13 +217,16 @@ class Checkout extends Base
 
     /**
      * Create a Web-Payment Form Instance
+     *
      * @param array $data
-     * @return \stdClass
-     * @throws \Magento\Framework\Webapi\Exception
+     *
+     * @return stdClass
+     *
+     * @throws WebapiException
      */
     protected function checkout($data)
     {
-        $genesis = $this->prepareGenesisWPFRequest($data);
+        $genesis = $this->prepareGenesisWpfRequest($data);
 
         if ($this->_configHelper->isThreedsAllowed()) {
             $this->prepareThreedsV2Parameters($genesis, $data);
@@ -209,8 +247,14 @@ class Checkout extends Base
     }
 
     /**
+     * Prepare the transaction types
+     *
      * @param Request $request
-     * @param array $data
+     * @param array   $data
+     *
+     * @throws ErrorParameter
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function prepareTransactionTypes($request, $data)
     {
@@ -227,25 +271,6 @@ class Checkout extends Base
             }
 
             switch ($transactionType) {
-                case GenesisTransactionTypes::PAYBYVOUCHER_SALE:
-                    $parameters = [
-                        'card_type'   => CardTypes::VIRTUAL,
-                        'redeem_type' => RedeemTypes::INSTANT
-                    ];
-                    break;
-                case GenesisTransactionTypes::PAYBYVOUCHER_YEEPAY:
-                    $parameters = [
-                        'card_type'        => CardTypes::VIRTUAL,
-                        'redeem_type'      => RedeemTypes::INSTANT,
-                        'product_name'     => $data['order']['description'],
-                        'product_category' => $data['order']['description']
-                    ];
-                    break;
-                case GenesisTransactionTypes::CITADEL_PAYIN:
-                    $parameters = [
-                        'merchant_customer_id' => $this->getModuleHelper()->getCurrentUserIdHash()
-                    ];
-                    break;
                 case GenesisTransactionTypes::IDEBIT_PAYIN:
                 case GenesisTransactionTypes::INSTA_DEBIT_PAYIN:
                     $parameters = [
@@ -302,13 +327,14 @@ class Checkout extends Base
      * @param array $data
      *
      * @return Genesis
-     * @throws \Genesis\Exceptions\InvalidMethod
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @throws InvalidMethod
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    protected function prepareGenesisWPFRequest($data)
+    protected function prepareGenesisWpfRequest($data)
     {
-        $genesis = new \Genesis\Genesis('WPF\Create');
+        $genesis = new Genesis('Wpf\Create');
 
         $genesis
             ->request()
@@ -423,12 +449,15 @@ class Checkout extends Base
     }
 
     /**
-     * @param $customerId
-     * @param $customerEmail
+     * Get the customer's token from the gateway
+     *
+     * @param int    $customerId
+     * @param string $customerEmail
      *
      * @return string|null
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     *
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     protected function getGatewayConsumerIdFor($customerId, $customerEmail)
     {
@@ -442,6 +471,8 @@ class Checkout extends Base
     }
 
     /**
+     * Get customer's token from the settings
+     *
      * @param CustomerInterface $customer
      *
      * @return array
@@ -458,14 +489,16 @@ class Checkout extends Base
     }
 
     /**
-     * @param $customerId
-     * @param $customerEmail
-     * @param $consumerId
+     * Save the customer's token to the settings
      *
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @throws \Magento\Framework\Exception\State\InputMismatchException
+     * @param int    $customerId
+     * @param string $customerEmail
+     * @param int    $consumerId
+     *
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     * @throws InputMismatchException
      */
     protected function setGatewayConsumerIdFor($customerId, $customerEmail, $consumerId)
     {
@@ -483,12 +516,14 @@ class Checkout extends Base
     }
 
     /**
-     * @param Genesis $genesis
-     * @param $customerId
-     * @param $customerEmail
+     * Prepare the tokenization
      *
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @param Genesis $genesis
+     * @param int     $customerId
+     * @param string  $customerEmail
+     *
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     protected function prepareTokenization(Genesis $genesis, $customerId, $customerEmail)
     {
@@ -506,6 +541,8 @@ class Checkout extends Base
     }
 
     /**
+     * Get the consumer's token for given email
+     *
      * @param string $email
      *
      * @return null|int
@@ -513,7 +550,9 @@ class Checkout extends Base
     protected function retrieveConsumerIdFromEmail($email)
     {
         try {
+            // @codingStandardsIgnoreStart
             $genesis = new Genesis('NonFinancial\Consumers\Retrieve');
+            // @codingStandardsIgnoreEnd
             $genesis->request()->setEmail($email);
 
             $genesis->execute();
@@ -525,13 +564,15 @@ class Checkout extends Base
             }
 
             return $response->consumer_id;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return null;
         }
     }
 
     /**
-     * @param $response
+     * Is the response error
+     *
+     * @param stdClass $response
      *
      * @return bool
      */
@@ -544,12 +585,15 @@ class Checkout extends Base
 
     /**
      * Order Payment
-     * @param \Magento\Payment\Model\InfoInterface $payment
-     * @param float $amount
+     *
+     * @param InfoInterface $payment
+     * @param float         $amount
+     *
      * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
+     *
+     * @throws LocalizedException|InvalidArgument
      */
-    public function order(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    public function order(InfoInterface $payment, $amount)
     {
         $order = $payment->getOrder();
 
@@ -592,17 +636,17 @@ class Checkout extends Base
                 'return_success' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                        Data::ACTION_RETURN_SUCCESS
                     ),
                 'return_cancel'  =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
+                        Data::ACTION_RETURN_CANCEL
                     ),
                 'return_failure' =>
                     $this->getModuleHelper()->getReturnUrl(
                         $this->getCode(),
-                        \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                        Data::ACTION_RETURN_FAILURE
                     ),
             ]
         ];
@@ -611,11 +655,9 @@ class Checkout extends Base
         $this->getConfigHelper()->initGatewayClient();
 
         try {
-            $responseObject = $this->checkout($data);
+            $responseObject  = $this->checkout($data);
 
-            $isWpfSuccessful =
-                ($responseObject->status == \Genesis\API\Constants\Transaction\States::NEW_STATUS) &&
-                isset($responseObject->redirect_url);
+            $isWpfSuccessful = ($responseObject->status == States::NEW_STATUS) && isset($responseObject->redirect_url);
 
             if (!$isWpfSuccessful) {
                 $errorMessage = $this->getModuleHelper()->getErrorMessageFromGatewayResponse(
@@ -651,7 +693,7 @@ class Checkout extends Base
             );
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->getLogger()->error(
                 $e->getMessage()
             );
@@ -668,12 +710,15 @@ class Checkout extends Base
 
     /**
      * Payment Capturing
-     * @param \Magento\Payment\Model\InfoInterface $payment
-     * @param float $amount
+     *
+     * @param InfoInterface $payment
+     * @param float         $amount
+     *
      * @return $this
-     * @throws \Magento\Framework\Webapi\Exception
+     *
+     * @throws WebapiException
      */
-    public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    public function capture(InfoInterface $payment, $amount)
     {
         /** @var \Magento\Sales\Model\Order $order */
         $order = $payment->getOrder();
@@ -700,7 +745,7 @@ class Checkout extends Base
 
         try {
             $this->doCapture($payment, $amount, $authTransaction);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->getLogger()->error(
                 $e->getMessage()
             );
@@ -713,10 +758,13 @@ class Checkout extends Base
     /**
      * Determines method's availability based on config data and quote amount
      *
-     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @param CartInterface|null $quote
+     *
      * @return bool
+     *
+     * @throws LocalizedException
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(CartInterface $quote = null)
     {
         return parent::isAvailable($quote) &&
             $this->getConfigHelper()->isMethodAvailable();
@@ -726,7 +774,10 @@ class Checkout extends Base
      * Checks base currency against the allowed currency
      *
      * @param string $currencyCode
+     *
      * @return bool
+     *
+     * @throws LocalizedException
      */
     public function canUseForCurrency($currencyCode)
     {
@@ -746,9 +797,6 @@ class Checkout extends Base
     protected function getCustomParameterKey($transactionType)
     {
         switch ($transactionType) {
-            case GenesisTransactionTypes::PPRO:
-                $result = 'payment_method';
-                break;
             case GenesisTransactionTypes::PAY_PAL:
                 $result = 'payment_type';
                 break;
@@ -767,13 +815,15 @@ class Checkout extends Base
      * Prepare the 3DSv2 WPF Parameters
      *
      * @param Genesis $genesis
-     * @param $data
+     * @param array   $data
+     *
      * @return void
-     * @throws \Genesis\Exceptions\InvalidArgument
+     *
+     * @throws InvalidArgument
      */
     protected function prepareThreedsV2Parameters($genesis, $data)
     {
-        /** @var \Genesis\API\Request\WPF\Create $request */
+        /** @var Create $request */
         $request = $genesis->request();
 
         /** @var \Magento\Sales\Model\Order $order */
@@ -847,7 +897,7 @@ class Checkout extends Base
     /**
      * Threeds V2 Helper
      *
-     * @return Data|\Ecomprocessing\Genesis\Helper\Threeds
+     * @return Threeds
      */
     protected function getThreedsHelper()
     {
@@ -857,15 +907,18 @@ class Checkout extends Base
     /**
      * Add SCA Exemption parameters to Genesis Request
      *
-     * @var \Genesis\Genesis $genesis
+     * @param Genesis $genesis
+     *
      * @return void
+     *
+     * @throws ErrorParameter
      */
     protected function addScaParameters($genesis)
     {
         $scaValue       = $this->getConfigHelper()->getScaExemption();
         $scaAmountValue = $this->getConfigHelper()->getScaExemptionAmount();
         $wpfAmount      = (float) $genesis->request()->getAmount();
-        /** @var \Genesis\API\Request\WPF\Create $request */
+        /** @var Create $request */
         $request        = $genesis->request();
 
         if ($wpfAmount <= $scaAmountValue) {

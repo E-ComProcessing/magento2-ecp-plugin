@@ -21,16 +21,22 @@ namespace Ecomprocessing\Genesis\Test\Unit\Model\Method;
 
 use Ecomprocessing\Genesis\Helper\Data;
 use Ecomprocessing\Genesis\Model\Method\Checkout as CheckoutPaymentMethod;
-use Genesis\API\Constants\Payment\Methods;
-use Genesis\API\Constants\Payment\Methods as GenesisPaymentMethods;
-use Genesis\API\Constants\Transaction\Types as GenesisTransactionTypes;
+use Genesis\Api\Constants\Transaction\States;
+use Genesis\Api\Constants\Transaction\Types as GenesisTransactionTypes;
+use Genesis\Genesis;
+use Magento\Payment\Model\MethodInterface;
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Model\Order\Payment\Transaction;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
+ * Test Checkout functionality
+ *
  * Class CheckoutTest
- * @covers \Ecomprocessing\Genesis\Model\Method\Checkout
- * @package Ecomprocessing\Genesis\Test\Unit\Model\Method
+ *
+ * @covers CheckoutPaymentMethod
  */
-class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\AbstractMethodTest
+class CheckoutTest extends AbstractMethodTest
 {
     protected function getPaymentMethodClassName()
     {
@@ -43,7 +49,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
     public function testGetConfigPaymentAction()
     {
         $this->assertEquals(
-            \Magento\Payment\Model\Method\AbstractMethod::ACTION_ORDER,
+            MethodInterface::ACTION_ORDER,
             $this->getPaymentMethodInstance()->getConfigPaymentAction()
         );
     }
@@ -60,38 +66,25 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
                 implode(
                     ',',
                     [
-                        GenesisTransactionTypes::ALIPAY,
                         GenesisTransactionTypes::EZEEWALLET,
                         GenesisTransactionTypes::IDEBIT_PAYIN,
-                        GenesisTransactionTypes::INPAY,
                         GenesisTransactionTypes::INSTA_DEBIT_PAYIN,
                         GenesisTransactionTypes::P24,
-                        GenesisTransactionTypes::PAYPAL_EXPRESS,
                         GenesisTransactionTypes::TRUSTLY_SALE,
                         GenesisTransactionTypes::WECHAT,
                         GenesisTransactionTypes::ONLINE_BANKING_PAYIN,
                         GenesisTransactionTypes::SDD_SALE,
-                        GenesisTransactionTypes::CITADEL_PAYIN,
                         GenesisTransactionTypes::AUTHORIZE,
                         GenesisTransactionTypes::AUTHORIZE_3D,
                         GenesisTransactionTypes::SALE,
                         GenesisTransactionTypes::SALE_3D,
-                        GenesisTransactionTypes::ABNIDEAL,
                         GenesisTransactionTypes::CASHU,
                         GenesisTransactionTypes::EZEEWALLET,
                         GenesisTransactionTypes::NETELLER,
                         GenesisTransactionTypes::POLI,
                         GenesisTransactionTypes::WEBMONEY,
-                        GenesisTransactionTypes::PAYBYVOUCHER_SALE,
                         GenesisTransactionTypes::PAYSAFECARD,
                         GenesisTransactionTypes::SOFORT,
-                        Methods::EPS . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::GIRO_PAY . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::PRZELEWY24 . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::SAFETY_PAY . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::BCMC . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::MYBANK . Data::PPRO_TRANSACTION_SUFFIX,
-                        Methods::IDEAL . Data::PPRO_TRANSACTION_SUFFIX
                     ]
                 )
             );
@@ -104,49 +97,17 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
                 GenesisTransactionTypes::AUTHORIZE_3D,
                 GenesisTransactionTypes::SALE,
                 GenesisTransactionTypes::SALE_3D,
-                GenesisTransactionTypes::ABNIDEAL,
-                GenesisTransactionTypes::ALIPAY,
                 GenesisTransactionTypes::CASHU,
-                GenesisTransactionTypes::CITADEL_PAYIN,
                 GenesisTransactionTypes::EZEEWALLET,
                 GenesisTransactionTypes::EZEEWALLET,
                 GenesisTransactionTypes::IDEBIT_PAYIN,
-                GenesisTransactionTypes::INPAY,
                 GenesisTransactionTypes::INSTA_DEBIT_PAYIN,
                 GenesisTransactionTypes::NETELLER,
                 GenesisTransactionTypes::ONLINE_BANKING_PAYIN,
                 GenesisTransactionTypes::P24,
-                GenesisTransactionTypes::PAYBYVOUCHER_SALE,
-                GenesisTransactionTypes::PAYPAL_EXPRESS,
                 GenesisTransactionTypes::PAYSAFECARD,
                 GenesisTransactionTypes::POLI,
                 GenesisTransactionTypes::SDD_SALE,
-                GenesisTransactionTypes::PPRO => [
-                    'name' => GenesisTransactionTypes::PPRO,
-                    'parameters' => [
-                        [
-                            'payment_method' => GenesisPaymentMethods::BCMC,
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::EPS
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::GIRO_PAY,
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::IDEAL,
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::MYBANK,
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::PRZELEWY24,
-                        ],
-                        [
-                            'payment_method' => GenesisPaymentMethods::SAFETY_PAY,
-                        ]
-                    ]
-                ],
                 GenesisTransactionTypes::SOFORT,
                 GenesisTransactionTypes::TRUSTLY_SALE,
                 GenesisTransactionTypes::WEBMONEY,
@@ -207,11 +168,11 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
             ->willReturn('en');
 
         /**
-         * @var $quote \Magento\Quote\Model\Quote|\PHPUnit_Framework_MockObject_MockObject
+         * @var $quote Quote|MockObject
          */
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCustomerEmail'])
+            ->addMethods(['getCustomerEmail'])
             ->getMock();
 
         $quote->expects(self::once())
@@ -254,15 +215,15 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
             ->withConsecutive(
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS
+                    Data::ACTION_RETURN_SUCCESS
                 ],
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL
+                    Data::ACTION_RETURN_CANCEL
                 ],
                 [
                     $this->getPaymentMethodInstance()->getCode(),
-                    \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE
+                    Data::ACTION_RETURN_FAILURE
                 ]
             )
             ->willReturnOnConsecutiveCalls(
@@ -272,7 +233,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
             );
 
         $gatewayResponse = $this->getSampleGatewayResponse(
-            \Genesis\API\Constants\Transaction\States::NEW_STATUS,
+            States::NEW_STATUS,
             null,
             null,
             null,
@@ -290,7 +251,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
         $this->dataHelperMock->expects(self::once())
             ->method('executeGatewayRequest')
             ->with(
-                $this->isInstanceOf(\Genesis\Genesis::class)
+                $this->isInstanceOf(Genesis::class)
             )
             ->willReturnArgument(0);
 
@@ -314,7 +275,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
         $this->paymentMock->expects(self::once())
             ->method('setTransactionAdditionalInfo')
             ->with(
-                \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS,
+                Transaction::RAW_DETAILS,
                 $this->dataHelperMock->getArrayFromGatewayResponse(
                     $gatewayResponse
                 )
@@ -338,6 +299,7 @@ class CheckoutTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Method\Abstra
      * Scope Config Method Settings values
      *
      * @param ...$args
+     *
      * @return string
      */
     public function configCallback(...$args)

@@ -21,13 +21,14 @@ namespace Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency;
 
 /**
  * Specific Currency Source
+ *
  * Class AllSpecificCurrencies
- * @package Ecomprocessing\Genesis\Model\Config\Source\Locale\Currency
  */
 class AllSpecificCurrencies implements \Magento\Framework\Option\ArrayInterface
 {
     /**
      * Builds an array for the select control in the Admin Zone
+     *
      * @return array
      */
     public function toOptionArray()

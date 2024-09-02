@@ -19,38 +19,56 @@
 
 namespace Ecomprocessing\Genesis\Controller;
 
+use Ecomprocessing\Genesis\Helper\Checkout;
+use Ecomprocessing\Genesis\Helper\Data;
+use Magento\Checkout\Model\Session;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Raw;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\Webapi\Exception;
+use Magento\Sales\Model\OrderFactory;
+use Psr\Log\LoggerInterface;
+
 /**
  * Base Checkout Redirect Controller Class
+ *
  * Class AbstractCheckoutRedirectAction
- * @package Ecomprocessing\Genesis\Controller
  */
-abstract class AbstractCheckoutRedirectAction extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction
+abstract class AbstractCheckoutRedirectAction extends AbstractCheckoutAction
 {
     /**
-     * @var \Ecomprocessing\Genesis\Helper\Checkout
+     * @var Checkout
      */
     protected $_checkoutHelper;
+
     /**
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Sales\Model\OrderFactory $orderFactory
-     * @param \Ecomprocessing\Genesis\Helper\Checkout $checkoutHelper
+     * @param Context         $context
+     * @param LoggerInterface $logger
+     * @param Session         $checkoutSession
+     * @param OrderFactory    $orderFactory
+     * @param Checkout        $checkoutHelper
+     * @param ResultFactory   $resultFactory
+     * @param UrlInterface    $urlBuilder
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Sales\Model\OrderFactory $orderFactory,
-        \Ecomprocessing\Genesis\Helper\Checkout $checkoutHelper
+        Context         $context,
+        LoggerInterface $logger,
+        Session         $checkoutSession,
+        OrderFactory    $orderFactory,
+        Checkout        $checkoutHelper,
+        ResultFactory   $resultFactory,
+        UrlInterface    $urlBuilder
     ) {
-        parent::__construct($context, $logger, $checkoutSession, $orderFactory);
+        parent::__construct($context, $logger, $checkoutSession, $orderFactory, $resultFactory, $urlBuilder);
         $this->_checkoutHelper = $checkoutHelper;
     }
 
     /**
      * Get an Instance of the Magento Checkout Helper
-     * @return \Ecomprocessing\Genesis\Helper\Checkout
+     *
+     * @return Checkout
      */
     protected function getCheckoutHelper()
     {
@@ -59,24 +77,36 @@ abstract class AbstractCheckoutRedirectAction extends \Ecomprocessing\Genesis\Co
 
     /**
      * Handle Success Action
-     * @return void
+     *
+     * @param bool $iframeRedirect
+     *
+     * @return ResponseInterface|Raw|null
      */
-    protected function executeSuccessAction()
+    protected function executeSuccessAction(bool $iframeRedirect)
     {
+        $response = null;
         if ($this->getCheckoutSession()->getLastRealOrderId()) {
-            $this->getMessageManager()->addSuccess(__("Your payment is complete"));
-            $this->redirectToCheckoutOnePageSuccess();
+            $this->getMessageManager()->addSuccessMessage(__("Your payment is complete"));
+
+            $response = $this->redirectToCheckoutOnePageSuccess($iframeRedirect);
         }
+
+        return $response;
     }
 
     /**
      * Handle Cancel Action from Payment Gateway
+     *
+     * @param bool $iframeRedirect
+     *
+     * @return ResponseInterface|Raw
      */
-    protected function executeCancelAction()
+    protected function executeCancelAction(bool $iframeRedirect)
     {
         $this->getCheckoutHelper()->cancelCurrentOrder('');
         $this->getCheckoutHelper()->restoreQuote();
-        $this->redirectToCheckoutCart();
+
+        return $this->redirectToCheckoutCart($iframeRedirect);
     }
 
     /**
@@ -90,5 +120,40 @@ abstract class AbstractCheckoutRedirectAction extends \Ecomprocessing\Genesis\Co
     protected function getReturnAction()
     {
         return $this->getRequest()->getParam('action');
+    }
+
+    /**
+     * Select redirect action based on the URL parameter
+     *
+     * @param string $action
+     * @param bool   $iframeRedirect
+     *
+     * @return ResponseInterface|void|null
+     */
+    protected function redirectAction(string $action, bool $iframeRedirect = false)
+    {
+        switch ($action) {
+            case Data::ACTION_RETURN_SUCCESS:
+                return $this->executeSuccessAction($iframeRedirect);
+
+            case Data::ACTION_RETURN_CANCEL:
+                $this->getMessageManager()->addWarningMessage(
+                    __("You have successfully canceled your order")
+                );
+
+                return $this->executeCancelAction($iframeRedirect);
+
+            case Data::ACTION_RETURN_FAILURE:
+                $this->getMessageManager()->addErrorMessage(
+                    __("Please, check your input and try again!")
+                );
+
+                return $this->executeCancelAction($iframeRedirect);
+
+            default:
+                $this->getResponse()->setHttpResponseCode(
+                    Exception::HTTP_UNAUTHORIZED
+                );
+        }
     }
 }

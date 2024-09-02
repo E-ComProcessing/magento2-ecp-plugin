@@ -23,29 +23,24 @@ use Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\BankCode;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\BankCode
- * @package Unit\Model\Config\Source\Method\Checkout
+ * @covers BankCode
  */
 class BankCodeTest extends TestCase
 {
     /**
-     * @covers \Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout\BankCode::toOptionArray
+     * @covers BankCode::toOptionArray
      */
     public function testToOptionArray()
     {
-        $data = [];
-        $sourceModel = new BankCode();
-
-        $availableBankCodes = BankCode::$availableBankCodes;
+        $data               = [];
+        $sourceModel        = new BankCode();
+        $availableBankCodes = $sourceModel->availableBankCodes;
 
         foreach ($availableBankCodes as $value => $label) {
-            array_push(
-                $data,
-                [
-                    'value' => $value,
-                    'label' => __($label)
-                ]
-            );
+            $data[] = [
+                'value' => $value,
+                'label' => __($label)
+            ];
         }
 
         $this->assertEquals(

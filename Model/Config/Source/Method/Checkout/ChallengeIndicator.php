@@ -19,35 +19,40 @@
 
 namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
 
-use Genesis\API\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
+use Genesis\Api\Constants\Transaction\Parameters\Threeds\V2\Control\ChallengeIndicators;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Checkout Bank codes Model Source
+ *
  * Class BankCode
- * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
 class ChallengeIndicator implements OptionSourceInterface
 {
-    protected $indicators = [
+    /**
+     * @var string[]
+     */
+    public $indicators = [
         ChallengeIndicators::NO_PREFERENCE          => 'No Preference',
         ChallengeIndicators::NO_CHALLENGE_REQUESTED => 'No Challenge Requested',
         ChallengeIndicators::PREFERENCE             => 'Preference',
         ChallengeIndicators::MANDATE                => 'Mandate'
     ];
 
+    /**
+     * Return array list of Challenge indicators
+     *
+     * @return array
+     */
     public function toOptionArray()
     {
         $data = [];
 
-        foreach ($this->indicators as $constant => $display) {
-            array_push(
-                $data,
-                [
-                    'value' => $constant,
-                    'label' => __($display)
-                ]
-            );
+        foreach ($this->indicators as $value => $label) {
+            $data[] = [
+                'value' => $value,
+                'label' => __($label)
+            ];
         }
 
         return $data;

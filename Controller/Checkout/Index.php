@@ -19,13 +19,15 @@
 
 namespace Ecomprocessing\Genesis\Controller\Checkout;
 
+use Ecomprocessing\Genesis\Controller\AbstractCheckoutAction;
+
 /**
  * Front Controller for Checkout Method
  * it does a redirect to the WPF
+ *
  * Class Index
- * @package Ecomprocessing\Genesis\Controller\Checkout
  */
-class Index extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction
+class Index extends AbstractCheckoutAction
 {
     /**
      * Redirect to Genesis WPF

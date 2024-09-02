@@ -17,7 +17,13 @@ GNU General Public License for more details.
 @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Ecomprocessing_Genesis::css/ecp-iframe.css"/>
+    </head>
     <body>
+        <referenceContainer name="content">
+            <block class="Ecomprocessing\Genesis\Block\Frontend\Config" name="ecp_iframe_settings" template="Ecomprocessing_Genesis::checkout/ecp_iframe_settings.phtml"/>
+        </referenceContainer>
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">

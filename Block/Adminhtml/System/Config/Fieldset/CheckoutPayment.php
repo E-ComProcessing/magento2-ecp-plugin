@@ -23,12 +23,12 @@ namespace Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset;
  * Renderer for Ecomprocessing Checkout Panel in System Configuration
  *
  * Class CheckoutPayment
- * @package Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset
  */
 class CheckoutPayment extends \Ecomprocessing\Genesis\Block\Adminhtml\System\Config\Fieldset\Base\Payment
 {
     /**
      * Retrieves the Module Panel Css Class
+     *
      * @return string
      */
     protected function getBlockHeadCssClass()

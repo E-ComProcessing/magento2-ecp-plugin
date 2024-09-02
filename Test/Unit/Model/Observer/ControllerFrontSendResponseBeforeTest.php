@@ -20,29 +20,24 @@
 namespace Ecomprocessing\Genesis\Test\Unit\Model\Observer;
 
 use Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
+ * Test front controller response
+ *
  * Class ControllerFrontSendResponseBeforeTest
- * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore
- * @package Ecomprocessing\Genesis\Test\Unit\Model\Observer
+ *
+ * @covers ControllerFrontSendResponseBefore
  */
-class ControllerFrontSendResponseBeforeTest extends \Ecomprocessing\Genesis\Test\Unit\Model\Observer\AbstractObserverTest
+class ControllerFrontSendResponseBeforeTest extends AbstractObserverTest
 {
     /**
-     * @var \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore|\PHPUnit_Framework_MockObject_MockObject
+     * @var ControllerFrontSendResponseBefore|MockObject
      */
     protected $observerInstance;
 
     /**
-     * @return string
-     */
-    protected function getObserverClassName()
-    {
-        return ControllerFrontSendResponseBefore::class;
-    }
-
-    /**
-     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers ControllerFrontSendResponseBefore::execute
      */
     public function testExecuteNullResponse()
     {
@@ -65,7 +60,7 @@ class ControllerFrontSendResponseBeforeTest extends \Ecomprocessing\Genesis\Test
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers ControllerFrontSendResponseBefore::execute
      */
     public function testExecuteDoNotOverrideCheckoutException()
     {
@@ -96,7 +91,7 @@ class ControllerFrontSendResponseBeforeTest extends \Ecomprocessing\Genesis\Test
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Model\Observer\ControllerFrontSendResponseBefore::execute()
+     * @covers ControllerFrontSendResponseBefore::execute
      */
     public function testExecuteOverrideCheckoutException()
     {
@@ -132,5 +127,13 @@ class ControllerFrontSendResponseBeforeTest extends \Ecomprocessing\Genesis\Test
             ->with($this->webapiException);
 
         $this->getObserverInstance()->execute($this->observerMock);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getObserverClassName()
+    {
+        return ControllerFrontSendResponseBefore::class;
     }
 }

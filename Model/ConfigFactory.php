@@ -19,17 +19,19 @@
 
 namespace Ecomprocessing\Genesis\Model;
 
+use Magento\Framework\ObjectManagerInterface;
+
 /**
- * Config Factory Class
+ * Config Factory helper Class
+ *
  * Class ConfigFactory
- * @package Ecomprocessing\Genesis\Model
  */
 class ConfigFactory
 {
     /**
      * Object Manager instance
      *
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $_objectManager = null;
     /**
@@ -42,22 +44,23 @@ class ConfigFactory
     /**
      * Factory constructor
      *
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param string $instanceName
+     * @param ObjectManagerInterface $objectManager
+     * @param string                 $instanceName
      */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = '\\Ecomprocessing\\Genesis\\Model\\Config'
+        ObjectManagerInterface $objectManager,
+        string                 $instanceName = Config::class
     ) {
         $this->_objectManager = $objectManager;
-        $this->_instanceName = $instanceName;
+        $this->_instanceName  = $instanceName;
     }
 
     /**
      * Create class instance with specified parameters
      *
      * @param array $data
-     * @return \Ecomprocessing\Genesis\Model\Config
+     *
+     * @return Config
      */
     public function create(array $data = [])
     {

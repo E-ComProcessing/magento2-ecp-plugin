@@ -19,26 +19,27 @@
 
 namespace Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout;
 
-use Genesis\API\Constants\Transaction\Parameters\ScaExemptions;
+use Genesis\Api\Constants\Transaction\Parameters\ScaExemptions;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Checkout Bank codes Model Source
+ *
  * Class BankCode
- * @package Ecomprocessing\Genesis\Model\Config\Source\Method\Checkout
  */
 class ScaExemption implements OptionSourceInterface
 {
     /**
      * @var array
      */
-    protected $exemptions = [
+    public $exemptions = [
         ScaExemptions::EXEMPTION_LOW_RISK  => 'Low Risk',
         ScaExemptions::EXEMPTION_LOW_VALUE => 'Low Value'
     ];
 
     /**
      * Builds the options for the MultiSelect control in the Admin Zone
+     *
      * @return array
      */
     public function toOptionArray()
@@ -46,13 +47,10 @@ class ScaExemption implements OptionSourceInterface
         $data = [];
 
         foreach ($this->exemptions as $value => $label) {
-            array_push(
-                $data,
-                [
-                    'value' => $value,
-                    'label' => __($label)
-                ]
-            );
+            $data[] = [
+                'value' => $value,
+                'label' => __($label)
+            ];
         }
 
         return $data;

@@ -17,6 +17,12 @@
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
+// phpcs:disable
+if (is_array($_SERVER) && array_key_exists('PLUGIN_ENV', $_SERVER) && $_SERVER['PLUGIN_ENV'] == 'linter') {
+    return;
+}
+// phpcs:enable
+
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
     'Ecomprocessing_Genesis',

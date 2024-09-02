@@ -22,13 +22,11 @@ namespace Ecomprocessing\Genesis\Controller\Ipn;
 /**
  * Unified IPN controller for all supported Ecomprocessing Payment Methods
  * Class Index
- * @package Ecomprocessing\Genesis\Controller\Ipn
  */
 class Index extends \Ecomprocessing\Genesis\Controller\AbstractAction
 {
     /**
-     * Get the name of the IPN Class, used to handle the posted Notification
-     * It is separated per Payment Method
+     * Get the name of the IPN Class, used to handle the posted Notification. It is separated per Payment Method
      *
      * @return null|string
      */

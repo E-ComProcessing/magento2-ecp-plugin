@@ -19,17 +19,22 @@
 
 namespace Ecomprocessing\Genesis\Test\Unit\Controller\Checkout;
 
+use Ecomprocessing\Genesis\Controller\AbstractCheckoutAction;
 use Ecomprocessing\Genesis\Controller\Checkout\Index as IndexController;
+use Ecomprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest;
 
 /**
+ * Test Checkout
+ *
  * Class IndexTest
- * @covers \Ecomprocessing\Genesis\Controller\Checkout\Index
- * @package Ecomprocessing\Genesis\Test\Unit\Controller\Checkout
+ *
+ * @covers IndexController
  */
-class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractControllerTest
+class IndexTest extends AbstractControllerTest
 {
     /**
      * Gets controller's fully qualified class name
+     *
      * @return string
      */
     protected function getControllerClassName()
@@ -38,7 +43,7 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Index::execute()
+     * @covers IndexController::execute()
      */
     public function testExecuteFailWhenLastRealOrderIdIsNull()
     {
@@ -62,7 +67,7 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Index::execute()
+     * @covers IndexController::execute()
      */
     public function testExecuteFailWhenRedirectUrlIsNull()
     {
@@ -85,15 +90,15 @@ class IndexTest extends \Ecomprocessing\Genesis\Test\Unit\Controller\AbstractCon
             ->method('redirect')
             ->with(
                 $this->getControllerInstance()->getResponse(),
-                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_PATH,
-                \Ecomprocessing\Genesis\Controller\AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_ARGS
+                AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_PATH,
+                AbstractCheckoutAction::ROUTE_PATTERN_CHECKOUT_FRAGMENT_PAYMENT_ARGS
             );
 
         $this->getControllerInstance()->execute();
     }
 
     /**
-     * @covers \Ecomprocessing\Genesis\Controller\Checkout\Index::execute()
+     * @covers IndexController::execute()
      */
     public function testExecuteSuccessfulRedirectToTheRedirectUrl()
     {

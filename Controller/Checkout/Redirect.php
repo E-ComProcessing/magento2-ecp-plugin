@@ -19,13 +19,14 @@
 
 namespace Ecomprocessing\Genesis\Controller\Checkout;
 
+use Ecomprocessing\Genesis\Controller\AbstractCheckoutRedirectAction;
+
 /**
  * Return Action Controller (used to handle Redirects from the Payment Gateway)
  *
  * Class Redirect
- * @package Ecomprocessing\Genesis\Controller\Checkout
  */
-class Redirect extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutRedirectAction
+class Redirect extends AbstractCheckoutRedirectAction
 {
     /**
      * Handle the result from the Payment Gateway
@@ -34,29 +35,7 @@ class Redirect extends \Ecomprocessing\Genesis\Controller\AbstractCheckoutRedire
      */
     public function execute()
     {
-        switch ($this->getReturnAction()) {
-            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_SUCCESS:
-                $this->executeSuccessAction();
-                break;
-
-            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_CANCEL:
-                $this->getMessageManager()->addWarning(
-                    __("You have successfully canceled your order")
-                );
-                $this->executeCancelAction();
-                break;
-
-            case \Ecomprocessing\Genesis\Helper\Data::ACTION_RETURN_FAILURE:
-                $this->getMessageManager()->addError(
-                    __("Please, check your input and try again!")
-                );
-                $this->executeCancelAction();
-                break;
-
-            default:
-                $this->getResponse()->setHttpResponseCode(
-                    \Magento\Framework\Webapi\Exception::HTTP_UNAUTHORIZED
-                );
-        }
+        $action = $this->getReturnAction();
+        $this->redirectAction($action);
     }
 }
