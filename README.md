@@ -1,3 +1,5 @@
+\*CAUTION\* The e-comprocessing Gateway Module Plugin for AdobeCommerce(Magento) is deprecated and will no longer receive updates.
+=============================
 E-Comprocessing Gateway Module for Magento 2 CE, EE, ECE
 =============================
 
